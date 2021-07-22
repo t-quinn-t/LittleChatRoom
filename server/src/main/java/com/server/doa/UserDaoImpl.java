@@ -6,15 +6,23 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
+
 @Component
 public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
 
-    @Autowired
-    JdbcTemplate template;
+    public UserDaoImpl(DataSource dataSource) {
+        setDataSource(dataSource);
+    }
 
-    public User save(User user) {
-
-        return user;
+    public boolean save(User user) {
+        getJdbcTemplate().update(
+                "INSERT INTO public.user (uname, pwd, email) VALUES (?, ?, ?)",
+                user.getName(),
+                user.getPwd(),
+                user.getEmail()
+                );
+        return false;
     }
 
     public boolean delete(String uid) {
