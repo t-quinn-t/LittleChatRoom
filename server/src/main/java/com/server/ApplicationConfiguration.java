@@ -1,16 +1,14 @@
 package com.server;
 
+import com.server.model.User;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan
-@EnableJpaRepositories("com.server.doa")
 public class ApplicationConfiguration {
 
     // Set up DB Connection
@@ -22,6 +20,13 @@ public class ApplicationConfiguration {
         dataSource.setUsername("admin");
         dataSource.setPassword("333");
         return dataSource;
+    }
+
+    // Set up User Model
+    @Bean
+    @Scope("prototype")
+    public User makeUser() {
+        return new User();
     }
 
 }

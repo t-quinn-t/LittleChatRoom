@@ -1,8 +1,6 @@
 package com.server.doa;
 
 import com.server.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +17,7 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         getJdbcTemplate().update(
                 "INSERT INTO public.user (uname, pwd, email) VALUES (?, ?, ?)",
                 user.getName(),
-                user.getPwd(),
+                user.getPassword(),
                 user.getEmail()
                 );
         return false;

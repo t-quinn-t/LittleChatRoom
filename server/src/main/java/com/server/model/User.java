@@ -1,20 +1,27 @@
 package com.server.model;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.lang.annotation.Documented;
-
-@Entity
+@Component
 public class User {
 
-    @Id
     private Long uid;
-
     private String uname;
     private String email;
-    private String pwd;
+    private String password;
+
+    public User() {
+        this.uname = "default";
+        this.email = "default@littlechatroom.com";
+        this.password = "pwd";
+    }
+
+    public User(String uname, String email, String password) {
+        this.uname = uname;
+        this.email = email;
+        this.password = password;
+    }
 
     public String getName() {
         return uname;
@@ -32,11 +39,11 @@ public class User {
         this.email = email;
     }
 
-    public String getPwd() {
-        return pwd;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
+    public void setPassword(String pwd) {
+        this.password = pwd;
     }
 }

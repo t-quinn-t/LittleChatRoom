@@ -16,12 +16,15 @@ public class UserController {
 
     @GetMapping("/test-connection")
     public String testConnection() {
-        User testUser = new User();
-        testUser.setName("Awesome Quinn");
-        testUser.setPwd("333");
-        testUser.setEmail("qtao@littlechatroom.com");
+        User testUser = new User("Awesome Quinn","333","qtao@littlechatroom.com");
         userDao.save(testUser);
         return "Successfully connected";
     }
 
+    @PostMapping("/register")
+    public String registerNewUser(@RequestParam String uname, @RequestParam String email,
+                                  @RequestParam String password) {
+
+        return "stub";
+    }
 }
