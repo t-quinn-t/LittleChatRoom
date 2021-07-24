@@ -3,7 +3,7 @@ package com.server.controller;
 import com.server.doa.UserDao;
 import com.server.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(value = "http://localhost:8080")
@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
+    private UserDao userDao;
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
-    UserDao userDao;
+    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
+        this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/test-connection")
     public String testConnection() {
@@ -23,8 +29,10 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerNewUser(@RequestParam String uname, @RequestParam String email,
-                                  @RequestParam String password) {
-
+                                  @RequestParam CharSequence password) {
+        String saltedPassword = passwordEncoder.encode(password);
+        User newUser = new User(uname, email, saltedPassword);
+        userDao.save(newUser);
         return "stub";
     }
 }

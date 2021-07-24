@@ -5,13 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.sql.DataSource;
 
 @Configuration
 public class ApplicationConfiguration {
 
-    // Set up DB Connection
+    /*  ----- ----- ----- Utility Bean Setup ----- ----- ----- */
     @Bean
     public DataSource postgresDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -22,7 +23,12 @@ public class ApplicationConfiguration {
         return dataSource;
     }
 
-    // Set up User Model
+    @Bean
+    public BCryptPasswordEncoder registerPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    /*  ----- ----- ----- Model Beans Setup ----- ----- ----- */
     @Bean
     @Scope("prototype")
     public User makeUser() {
