@@ -1,8 +1,12 @@
 package com.server.controller;
 
 import com.server.doa.UserDao;
+import com.server.exception.CredentialFailureException;
+import com.server.exception.UserNotFoundException;
 import com.server.model.User;
+import com.server.model_assembler.UserModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +17,13 @@ public class UserController {
 
     private final UserDao userDao;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserModelAssembler assembler;
 
     @Autowired
-    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
+    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+        this.assembler = assembler;
     }
 
     @GetMapping("/test-connection")
@@ -37,5 +43,22 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public Response
+    public EntityModel<User> login(@RequestParam String identifier, @RequestParam CharSequence password) {
+
+        // find user
+        User locatedUser = userDao.findByName(identifier);
+        if (locatedUser == null)
+            locatedUser = userDao.findByEmail(identifier);
+        if (locatedUser == null)
+            throw new UserNotFoundException(identifier);
+
+        // user password match-up
+        if (!passwordEncoder.matches(password, locatedUser.getPassword()))
+            throw new CredentialFailureException();
+
+        // login succeed
+        return assembler.toModel(locatedUser);
+    }
+
+
 }

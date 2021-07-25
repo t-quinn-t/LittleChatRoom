@@ -13,18 +13,21 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         setDataSource(dataSource);
     }
 
-    public boolean save(User user) {
-        getJdbcTemplate().update(
-                "INSERT INTO public.user (uname, pwd, email) VALUES (?, ?, ?)",
-                user.getName(),
-                user.getPassword(),
-                user.getEmail()
-                );
-        return false;
+    public void save(User user) {
+        try {
+            getJdbcTemplate().update(
+                    "INSERT INTO public.user (uname, pwd, email) VALUES (?, ?, ?)",
+                    user.getName(),
+                    user.getPassword(),
+                    user.getEmail()
+            );
+        } catch (NullPointerException e) {
+            return;
+        }
     }
 
-    public boolean delete(String uid) {
-        return false;
+    public void delete(String uid) {
+        return;
     }
 
     public User updatePassword(String uid, String oldPassword, String newPassword) {
@@ -35,7 +38,11 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         return null;
     }
 
-    public User findById(String uid) {
+    public User findByName(String uname) {
+        return null;
+    }
+
+    public User findByEmail(String email) {
         return null;
     }
 }
