@@ -1,3 +1,7 @@
+-- noinspection SqlDialectInspectionForFile
+
+-- noinspection SqlNoDataSourceInspectionForFile
+
 create table if not exists usr (
 	uid serial primary key not null,
 	uname varchar(50) not null,
