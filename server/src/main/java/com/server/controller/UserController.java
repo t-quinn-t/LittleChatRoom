@@ -28,7 +28,8 @@ public class UserController {
 
     @GetMapping("/test-connection")
     public String testConnection() {
-        User testUser = new User("Awesome Quinn","333","qtao@littlechatroom.com");
+        String saltedPassword = passwordEncoder.encode("888");
+        User testUser = new User("admin","333",saltedPassword);
         userDao.save(testUser);
         return "Successfully connected";
     }
@@ -46,9 +47,9 @@ public class UserController {
     public EntityModel<User> login(@RequestParam String identifier, @RequestParam CharSequence password) {
 
         // find user
-        User locatedUser = userDao.findByName(identifier);
+        User locatedUser = userDao.findByIdentifier(identifier, "uname");
         if (locatedUser == null)
-            locatedUser = userDao.findByEmail(identifier);
+            locatedUser = userDao.findByIdentifier(identifier, "email");
         if (locatedUser == null)
             throw new UserNotFoundException(identifier);
 

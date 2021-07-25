@@ -2,6 +2,8 @@ package com.server.dao;
 
 import com.server.model.User;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,11 +22,10 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         setDataSource(dataSource);
     }
 
-    public void save(User user) throws NullPointerException {
+    public void save(User user) {
 
         getJdbcTemplate().update(
-                "INSERT INTO public.user (uname, pwd, email) VALUES (@_uname, ?, ?) WHERE NOT EXISTS " +
-                            "(SELECT * FROM public.user WHERE uname = @_uname)",
+                "INSERT INTO public.user (uname, pwd, email) VALUES (?, ?, ?)",
                 user.getName(),
                 user.getPassword(),
                 user.getEmail()
@@ -45,18 +46,23 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     }
 
     public User findByIdentifier(String identifier, String idType) {
-        User ret = new User();
-
-        getJdbcTemplate().query("SELECT * FROM public.user WHERE " + idType + " ?",
-                new Object[]{identifier}, new RowCallbackHandler() {
-                    @Override
-                    public void processRow(ResultSet resultSet) throws SQLException {
-                        ret.setName(resultSet.getString("uname"));
-                        ret.setEmail(resultSet.getString("email"));
-                        ret.setPassword(resultSet.getString("pwd"));
-                    }
-                });
-        return ret;
+        User user;
+        try {
+            assert getJdbcTemplate() != null;
+            String ps = "SELECT * FROM public.user WHERE " + idType + " = ?";
+            user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
+                    (resultSet, i) -> {
+                        User user1 = new User();
+                        user1.setName(resultSet.getString("uname"));
+                        user1.setEmail(resultSet.getString("email"));
+                        user1.setPassword(resultSet.getString("pwd"));
+                        return user1;
+                    },
+                    identifier));
+        } catch (NullPointerException e) {
+            user = null;
+        }
+        return user;
     }
 
 }
