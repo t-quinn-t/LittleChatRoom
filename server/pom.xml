@@ -58,6 +58,13 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>5.5.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.hateoas/spring-hateoas -->
+		<dependency>
+			<groupId>org.springframework.hateoas</groupId>
+			<artifactId>spring-hateoas</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+
 
 	</dependencies>
 

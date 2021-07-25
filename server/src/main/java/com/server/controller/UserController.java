@@ -35,4 +35,7 @@ public class UserController {
         userDao.save(newUser);
         return "New User Registered";
     }
+
+    @GetMapping("/login")
+    public Response
 }
