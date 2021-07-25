@@ -1,8 +1,12 @@
 package com.server.controller;
 
-import com.server.doa.UserDao;
+import com.server.dao.UserDao;
+import com.server.exception.CredentialFailureException;
+import com.server.exception.UserNotFoundException;
 import com.server.model.User;
+import com.server.model_assembler.UserModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,16 +17,19 @@ public class UserController {
 
     private final UserDao userDao;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserModelAssembler assembler;
 
     @Autowired
-    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
+    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+        this.assembler = assembler;
     }
 
     @GetMapping("/test-connection")
     public String testConnection() {
-        User testUser = new User("Awesome Quinn","333","qtao@littlechatroom.com");
+        String saltedPassword = passwordEncoder.encode("888");
+        User testUser = new User("admin","333",saltedPassword);
         userDao.save(testUser);
         return "Successfully connected";
     }
@@ -35,4 +42,24 @@ public class UserController {
         userDao.save(newUser);
         return "New User Registered";
     }
+
+    @GetMapping("/login")
+    public EntityModel<User> login(@RequestParam String identifier, @RequestParam CharSequence password) {
+
+        // find user
+        User locatedUser = userDao.findByIdentifier(identifier, "uname");
+        if (locatedUser == null)
+            locatedUser = userDao.findByIdentifier(identifier, "email");
+        if (locatedUser == null)
+            throw new UserNotFoundException(identifier);
+
+        // user password match-up
+        if (!passwordEncoder.matches(password, locatedUser.getPassword()))
+            throw new CredentialFailureException();
+
+        // login succeed
+        return assembler.toModel(locatedUser);
+    }
+
+
 }
