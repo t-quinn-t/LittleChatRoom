@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    private UserDao userDao;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final UserDao userDao;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
@@ -33,6 +33,6 @@ public class UserController {
         String saltedPassword = passwordEncoder.encode(password);
         User newUser = new User(uname, email, saltedPassword);
         userDao.save(newUser);
-        return "stub";
+        return "New User Registered";
     }
 }
