@@ -1,6 +1,6 @@
 package com.server.controller;
 
-import com.server.doa.UserDao;
+import com.server.dao.UserDao;
 import com.server.exception.CredentialFailureException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.User;

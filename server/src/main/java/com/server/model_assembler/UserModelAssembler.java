@@ -1,10 +1,8 @@
 package com.server.model_assembler;
 
-import com.server.controller.UserController;
 import com.server.model.User;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package com.server.doa;
+package com.server.dao;
 
 import com.server.model.User;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,6 @@ public interface UserDao {
     public void delete(String uid);
     public User updatePassword(String uid, String oldPassword, String newPassword);
     public User updateProfile(String uid, String uname, String email);
-    public User findByName(String uname);
-    public User findByEmail(String email);
+    public User findByIdentifier(String identifier, String idType);
 
 }
