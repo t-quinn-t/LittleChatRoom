@@ -1,3 +1,4 @@
+
 create table if not exists usr (
 	uid serial primary key not null,
 	uname varchar(50) not null,
@@ -8,15 +9,15 @@ create table if not exists usr (
 );
 
 create or replace function update_user_trigger()
-return trigger as 
+returns trigger as
 $$
-	begin;
+	begin
 	new.updated_time = now();
 	return new;
 	end;
 $$ language plpgsql;
 
-create or replace trigger update_user
+create trigger update_user
 	before update on usr
 	for each row 
 	execute procedure update_user_trigger();
