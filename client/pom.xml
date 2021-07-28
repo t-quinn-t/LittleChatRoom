@@ -83,7 +83,7 @@
                         </goals>
                         <phase>prepare-package</phase>
                         <configuration>
-                            <outputDirectory>${project.basedir}/../server/src/main/resources</outputDirectory>
+                            <outputDirectory>${project.basedir}/../server/src/main/resources/static</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${frontend-src-dir}/build</directory>
