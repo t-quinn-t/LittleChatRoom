@@ -30,9 +30,9 @@ public class ApplicationConfiguration {
 
     /*  ----- ----- ----- Model Beans Setup ----- ----- ----- */
     @Bean
+
     @Scope("prototype")
     public User makeUser() {
         return new User();
     }
-
 }
