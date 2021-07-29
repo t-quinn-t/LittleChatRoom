@@ -85,6 +85,6 @@ public class UserController {
         }
         currUser.setPassword(passwordEncoder.encode(newPassword));
         userDao.updateUser(currUser);
-        return null;
+        return assembler.toModel(currUser);
     }
 }
