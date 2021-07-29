@@ -23,7 +23,6 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     }
 
     public void save(User user) {
-
         getJdbcTemplate().update(
                 "INSERT INTO public.users (uname, pwd, email) VALUES (?, ?, ?)",
                 user.getName(),
@@ -33,8 +32,11 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
 
     }
 
-    public void delete(String uid) {
-        return;
+    public void delete(String uname) {
+      getJdbcTemplate().update(
+                "DELETE FROM public.users WHERE uname = ?",
+                uname
+        );
     }
 
     public User updatePassword(String uid, String oldPassword, String newPassword) {
