@@ -6,6 +6,7 @@ import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +19,22 @@ public class UserController {
     private final UserDao userDao;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserModelAssembler assembler;
+    private final ApplicationContext context;
 
     @Autowired
-    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler) {
+    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler,
+                          ApplicationContext context) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.assembler = assembler;
+        this.context = context;
     }
 
     @GetMapping("/test-connection")
     public String testConnection() {
         String saltedPassword = passwordEncoder.encode("888");
-        User testUser = new User("admin","333",saltedPassword);
+
+        User testUser = context.getBean(User.class);
         userDao.save(testUser);
         return "Successfully connected";
     }
