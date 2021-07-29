@@ -35,9 +35,9 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         getJdbcTemplate().update(
                 "UPDATE public.user " +
-                        "SET uname = ?" +
-                        "SET email = ?" +
-                        "SET password = ?",
+                        "SET uname = ?, " +
+                        "SET email = ?, " +
+                        "SET password = ? ",
                 user.getName(), user.getEmail(), user.getPassword()
         );
     }

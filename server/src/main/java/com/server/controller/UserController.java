@@ -2,10 +2,10 @@ package com.server.controller;
 
 import com.server.dao.UserDao;
 import com.server.exception.CredentialFailureException;
+import com.server.exception.PasswordSameException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
-import org.apache.logging.log4j.util.Chars;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,7 +46,8 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public EntityModel<User> login(@RequestParam String identifier, @RequestParam CharSequence password) {
+    public EntityModel<User> login(@RequestParam(name="identifier") String identifier,
+                                   @RequestParam CharSequence password) {
 
         // find user
         User locatedUser = userDao.findByIdentifier(identifier, "uname");
@@ -64,7 +65,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public EntityModel<User> login(@RequestParam String uname, @RequestParam String email) {
+    public EntityModel<User> updateNameAndEmail(@RequestParam String uname, @RequestParam String email) {
         User currUser = userDao.findByIdentifier(uname, "uname");
         if (currUser == null)
             throw new UserNotFoundException(uname);
@@ -74,4 +75,16 @@ public class UserController {
         return assembler.toModel(currUser);
     }
 
+    @PostMapping("/changePassword")
+    public EntityModel<User> updatePassword(@RequestParam String uname, @RequestParam CharSequence newPassword) {
+        User currUser = userDao.findByIdentifier(uname, "uname");
+        if (currUser == null)
+            throw new UserNotFoundException(uname);
+        if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
+            throw new PasswordSameException();
+        }
+        currUser.setPassword(passwordEncoder.encode(newPassword));
+        userDao.updateUser(currUser);
+        return null;
+    }
 }

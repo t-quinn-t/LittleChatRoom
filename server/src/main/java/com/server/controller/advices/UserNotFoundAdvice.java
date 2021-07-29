@@ -1,4 +1,4 @@
-package com.server.controller;
+package com.server.controller.advices;
 
 import com.server.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
