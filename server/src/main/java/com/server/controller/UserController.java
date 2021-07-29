@@ -67,7 +67,7 @@ public class UserController {
     @PostMapping("/update")
     public EntityModel<User> updateNameAndEmail(@RequestParam Long uid, @RequestParam(required = false) String uname,
                                                 @RequestParam(required = false) String email) {
-        User currUser = userDao.findByIdentifier(null, "uid", uid);
+        User currUser = userDao.findByIdentifier(null, null, uid);
         if (currUser == null)
             throw new UserNotFoundException("unknown"); // uid is hidden
         if (uname != null)
@@ -89,5 +89,13 @@ public class UserController {
         currUser.setPassword(passwordEncoder.encode(newPassword));
         userDao.updateUser(currUser);
         return assembler.toModel(currUser);
+    }
+
+    @PostMapping("/delete")
+    public void deleteUser(@RequestParam Long uid) {
+        User currUser = userDao.findByIdentifier(null, null, uid);
+        if (currUser == null)
+            throw new UserNotFoundException("unknown");
+        userDao.delete(uid);
     }
 }

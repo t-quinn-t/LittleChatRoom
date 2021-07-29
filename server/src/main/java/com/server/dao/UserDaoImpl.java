@@ -23,11 +23,11 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         );
     }
 
-    public void delete(String uname) throws NullPointerException {
+    public void delete(Long uid) throws NullPointerException {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         getJdbcTemplate().update(
-                "DELETE FROM public.users WHERE uname = ?",
-                uname
+                "DELETE FROM public.users WHERE uid = ?",
+                uid
         );
     }
 

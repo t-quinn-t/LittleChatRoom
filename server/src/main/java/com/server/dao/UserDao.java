@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public interface UserDao {
 
     public void save(User user);
-    public void delete(String uname);
+    public void delete(Long uid);
     public void updateUser(User user);
 
     /**
