@@ -2,6 +2,7 @@ package com.server.controller;
 
 import com.server.dao.UserDao;
 import com.server.exception.CredentialFailureException;
+import com.server.exception.PasswordSameException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
@@ -29,7 +30,8 @@ public class UserController {
     @GetMapping("/test-connection")
     public String testConnection() {
         String saltedPassword = passwordEncoder.encode("888");
-        User testUser = new User("admin","333",saltedPassword);
+        User testUser = new User();
+        testUser.setPassword(saltedPassword);
         userDao.save(testUser);
         return "Successfully connected";
     }
@@ -44,12 +46,13 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public EntityModel<User> login(@RequestParam String identifier, @RequestParam CharSequence password) {
+    public EntityModel<User> login(@RequestParam(name="identifier") String identifier,
+                                   @RequestParam CharSequence password) {
 
         // find user
-        User locatedUser = userDao.findByIdentifier(identifier, "uname");
+        User locatedUser = userDao.findByIdentifier(identifier, "uname", (long) -1);
         if (locatedUser == null)
-            locatedUser = userDao.findByIdentifier(identifier, "email");
+            locatedUser = userDao.findByIdentifier(identifier, "email", (long) -1);
         if (locatedUser == null)
             throw new UserNotFoundException(identifier);
 
@@ -61,5 +64,38 @@ public class UserController {
         return assembler.toModel(locatedUser);
     }
 
+    @PostMapping("/update")
+    public EntityModel<User> updateNameAndEmail(@RequestParam Long uid, @RequestParam(required = false) String uname,
+                                                @RequestParam(required = false) String email) {
+        User currUser = userDao.findByIdentifier(null, null, uid);
+        if (currUser == null)
+            throw new UserNotFoundException("unknown"); // uid is hidden
+        if (uname != null)
+            currUser.setName(uname);
+        if (email != null)
+            currUser.setEmail(email);
+        userDao.updateUser(currUser);
+        return assembler.toModel(currUser);
+    }
 
+    @PostMapping("/changePassword")
+    public EntityModel<User> updatePassword(@RequestParam String uname, @RequestParam CharSequence newPassword) {
+        User currUser = userDao.findByIdentifier(uname, "uname", (long) -1);
+        if (currUser == null)
+            throw new UserNotFoundException(uname);
+        if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
+            throw new PasswordSameException();
+        }
+        currUser.setPassword(passwordEncoder.encode(newPassword));
+        userDao.updateUser(currUser);
+        return assembler.toModel(currUser);
+    }
+
+    @PostMapping("/delete")
+    public void deleteUser(@RequestParam Long uid) {
+        User currUser = userDao.findByIdentifier(null, null, uid);
+        if (currUser == null)
+            throw new UserNotFoundException("unknown");
+        userDao.delete(uid);
+    }
 }

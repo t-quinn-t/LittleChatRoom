@@ -7,9 +7,15 @@ import org.springframework.stereotype.Repository;
 public interface UserDao {
 
     public void save(User user);
-    public void delete(String uid);
-    public User updatePassword(String uid, String oldPassword, String newPassword);
-    public User updateProfile(String uid, String uname, String email);
-    public User findByIdentifier(String identifier, String idType);
+    public void delete(Long uid);
+    public void updateUser(User user);
+
+    /**
+     * A Generic Search Function
+     * @param uid: if -1, then find by using an identifier (name or email, depends on idType)
+     *           else, use uid to search for a user
+     * @return a single user or null if failed
+     */
+    public User findByIdentifier(String identifier, String idType, Long uid);
 
 }

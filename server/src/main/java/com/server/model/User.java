@@ -3,7 +3,6 @@ package com.server.model;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
 public class User {
 
     private Long uid;
@@ -45,5 +44,13 @@ public class User {
 
     public void setPassword(String pwd) {
         this.password = pwd;
+    }
+
+    public Long getUid() {
+        return this.uid;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
     }
 }
