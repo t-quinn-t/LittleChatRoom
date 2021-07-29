@@ -5,6 +5,7 @@ import com.server.exception.CredentialFailureException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
+import org.apache.logging.log4j.util.Chars;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -62,5 +63,15 @@ public class UserController {
         return assembler.toModel(locatedUser);
     }
 
+    @PostMapping("/update")
+    public EntityModel<User> login(@RequestParam String uname, @RequestParam String email) {
+        User currUser = userDao.findByIdentifier(uname, "uname");
+        if (currUser == null)
+            throw new UserNotFoundException(uname);
+        currUser.setName(uname);
+        currUser.setEmail(email);
+        userDao.updateUser(currUser);
+        return assembler.toModel(currUser);
+    }
 
 }
