@@ -33,24 +33,25 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     }
 
     public void delete(String uname) {
-      getJdbcTemplate().update(
+        getJdbcTemplate().update(
                 "DELETE FROM public.users WHERE uname = ?",
                 uname
         );
     }
 
-    public User updatePassword(String uid, String oldPassword, String newPassword) {
-        return null;
-    }
-
-    public User updateProfile(String uid, String uname, String email) {
-        return null;
+    public void updateUser(User user) {
+        getJdbcTemplate().update(
+                "UPDATE public.user " +
+                        "SET uname = ?" +
+                        "SET email = ?" +
+                        "SET password = ?",
+                user.getName(), user.getEmail(), user.getPassword()
+        );
     }
 
     public User findByIdentifier(String identifier, String idType) {
         User user;
         try {
-            assert getJdbcTemplate() != null;
             String ps = "SELECT * FROM public.users WHERE " + idType + " = ?";
             user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
                     (resultSet, i) -> {

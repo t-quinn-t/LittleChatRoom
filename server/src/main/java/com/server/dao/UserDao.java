@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 public interface UserDao {
 
     public void save(User user);
-    public void delete(String uid);
-    public User updatePassword(String uid, String oldPassword, String newPassword);
-    public User updateProfile(String uid, String uname, String email);
+    public void delete(String uname);
+    public void updateUser(User user);
     public User findByIdentifier(String identifier, String idType);
 
 }
