@@ -25,7 +25,7 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     public void save(User user) {
 
         getJdbcTemplate().update(
-                "INSERT INTO public.user (uname, pwd, email) VALUES (?, ?, ?)",
+                "INSERT INTO public.users (uname, pwd, email) VALUES (?, ?, ?)",
                 user.getName(),
                 user.getPassword(),
                 user.getEmail()
@@ -49,7 +49,7 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         User user;
         try {
             assert getJdbcTemplate() != null;
-            String ps = "SELECT * FROM public.user WHERE " + idType + " = ?";
+            String ps = "SELECT * FROM public.users WHERE " + idType + " = ?";
             user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
                     (resultSet, i) -> {
                         User user1 = new User();
