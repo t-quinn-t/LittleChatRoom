@@ -43,21 +43,38 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         );
     }
 
-    public User findByIdentifier(String identifier, String idType) {
+    public User findByIdentifier(String identifier, String idType, Long uid) {
+
         User user;
         try {
-            String ps = "SELECT * FROM public.users WHERE " + idType + " = ?";
             if (getJdbcTemplate() == null) throw new NullPointerException();
-            user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
-                    (resultSet, i) -> {
-                        User user1 = new User();
-                        user1.setName(resultSet.getString("uname"));
-                        user1.setEmail(resultSet.getString("email"));
-                        user1.setPassword(resultSet.getString("pwd"));
-                        user1.setUid(resultSet.getLong("uid"));
-                        return user1;
-                    },
-                    identifier));
+            if (uid == -1) {
+                String ps = "SELECT * FROM public.users WHERE " + idType + " = ?";
+                user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
+                        (resultSet, i) -> {
+                            User user1 = new User();
+                            user1.setName(resultSet.getString("uname"));
+                            user1.setEmail(resultSet.getString("email"));
+                            user1.setPassword(resultSet.getString("pwd"));
+                            user1.setUid(resultSet.getLong("uid"));
+                            return user1;
+                        },
+                        identifier));
+            }
+            else {
+                String ps = "SELECT * FROM public.users WHERE uid = ?";
+                user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
+                        (resultSet, i) -> {
+                            User user1 = new User();
+                            user1.setName(resultSet.getString("uname"));
+                            user1.setEmail(resultSet.getString("email"));
+                            user1.setPassword(resultSet.getString("pwd"));
+                            user1.setUid(resultSet.getLong("uid"));
+                            return user1;
+                        },
+                        uid));
+            }
+
         } catch (NullPointerException e) {
             user = null;
         }

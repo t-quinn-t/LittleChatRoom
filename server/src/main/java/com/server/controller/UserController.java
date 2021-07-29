@@ -50,9 +50,9 @@ public class UserController {
                                    @RequestParam CharSequence password) {
 
         // find user
-        User locatedUser = userDao.findByIdentifier(identifier, "uname");
+        User locatedUser = userDao.findByIdentifier(identifier, "uname", (long) -1);
         if (locatedUser == null)
-            locatedUser = userDao.findByIdentifier(identifier, "email");
+            locatedUser = userDao.findByIdentifier(identifier, "email", (long) -1);
         if (locatedUser == null)
             throw new UserNotFoundException(identifier);
 
@@ -65,19 +65,22 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public EntityModel<User> updateNameAndEmail(@RequestParam String uname, @RequestParam String email) {
-        User currUser = userDao.findByIdentifier(uname, "uname");
+    public EntityModel<User> updateNameAndEmail(@RequestParam Long uid, @RequestParam(required = false) String uname,
+                                                @RequestParam(required = false) String email) {
+        User currUser = userDao.findByIdentifier(null, "uid", uid);
         if (currUser == null)
-            throw new UserNotFoundException(uname);
-        currUser.setName(uname);
-        currUser.setEmail(email);
+            throw new UserNotFoundException("unknown"); // uid is hidden
+        if (uname != null)
+            currUser.setName(uname);
+        if (email != null)
+            currUser.setEmail(email);
         userDao.updateUser(currUser);
         return assembler.toModel(currUser);
     }
 
     @PostMapping("/changePassword")
     public EntityModel<User> updatePassword(@RequestParam String uname, @RequestParam CharSequence newPassword) {
-        User currUser = userDao.findByIdentifier(uname, "uname");
+        User currUser = userDao.findByIdentifier(uname, "uname", (long) -1);
         if (currUser == null)
             throw new UserNotFoundException(uname);
         if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
