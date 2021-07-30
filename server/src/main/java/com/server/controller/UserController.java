@@ -11,7 +11,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(value = "http://localhost:8080")
+@CrossOrigin(value = {"http://localhost:8080","http://localhost:3000"})
 @RestController
 @RequestMapping("/user")
 public class UserController {
