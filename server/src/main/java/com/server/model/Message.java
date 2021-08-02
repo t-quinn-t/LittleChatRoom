@@ -6,13 +6,13 @@ package com.server.model;
  */
 public class Message {
     private Long id;
-    private String sender;
-    private String room;
+    private Long senderId;
+    private Long roomId;
     private String content;
 
-    public Message(String sender, String room, String content) {
-        this.sender = sender;
-        this.room = room;
+    public Message(Long sender, Long room, String content) {
+        this.senderId = sender;
+        this.roomId = room;
         this.content  = content;
     }
 
@@ -24,20 +24,20 @@ public class Message {
         this.id = id;
     }
 
-    public String getSender() {
-        return sender;
+    public Long getSender() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSender(Long sender) {
+        this.senderId = sender;
     }
 
-    public String getRoom() {
-        return room;
+    public Long getRoom() {
+        return roomId;
     }
 
-    public void setRoom(String room) {
-        this.room = room;
+    public void setRoom(Long room) {
+        this.roomId = room;
     }
 
     public String getContent() {

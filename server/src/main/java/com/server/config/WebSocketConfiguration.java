@@ -1,6 +1,7 @@
 package com.server.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 /**
  * @author Qintu (Quinn) Tao
@@ -8,5 +9,7 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-public class MessageConfiguration {
+@EnableWebSocketMessageBroker
+public class WebSocketConfiguration {
+
 }
