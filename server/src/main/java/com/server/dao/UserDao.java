@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserDao {
-
     public void save(User user);
     public void delete(Long uid);
     public void updateUser(User user);
@@ -17,5 +16,4 @@ public interface UserDao {
      * @return a single user or null if failed
      */
     public User findByIdentifier(String identifier, String idType, Long uid);
-
 }

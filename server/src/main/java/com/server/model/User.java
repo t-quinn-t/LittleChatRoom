@@ -1,10 +1,6 @@
 package com.server.model;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 public class User {
-
     private Long uid;
     private String uname;
     private String email;

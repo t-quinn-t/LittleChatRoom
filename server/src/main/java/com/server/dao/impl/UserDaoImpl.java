@@ -1,5 +1,6 @@
-package com.server.dao;
+package com.server.dao.impl;
 
+import com.server.dao.UserDao;
 import com.server.model.User;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
