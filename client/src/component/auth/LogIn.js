@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import './LogIn.css';
 import {Alert} from "react-bootstrap";
-
+import {useHistory} from 'react-router-dom';
 
 
 export default function LogInPage(props) {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+    let history = useHistory();
 
     async function submitForm () {
         let url = "http://localhost:8080/user/login?identifier="+userName+"&password="+password;
@@ -31,8 +31,10 @@ export default function LogInPage(props) {
                 return response;
             })
             .catch(error=>console.log(error));
-        if (response != null)
-            props.userLoginHandler(response)
+        if (response != null) {
+            props.userLoginHandler(response);
+            history.push("chatroom");
+        }
     }
 
     return (
