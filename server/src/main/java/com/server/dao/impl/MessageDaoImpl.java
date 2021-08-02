@@ -2,14 +2,9 @@ package com.server.dao.impl;
 
 import com.server.dao.MessageDao;
 import com.server.model.Message;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
