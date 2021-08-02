@@ -1,3 +1,4 @@
 client/node
 client/target
 .VSCodeCounter/
+/server/src/main/resources/static
