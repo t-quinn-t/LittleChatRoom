@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,14 +43,10 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         return this.getJdbcTemplate().query(
             "SELECT * FROM public.messages WHERE from_room = ?",
-            new RowMapper<Message>() {
-                public Message mapRow(@NonNull ResultSet resultSet, int i) throws SQLException {
-                    return new Message(
-                            resultSet.getString("from_user"),
-                            resultSet.getString("from_room"),
-                            resultSet.getString("message_content"));
-                }
-            },
+                (resultSet, i) -> new Message(
+                        resultSet.getString("from_user"),
+                        resultSet.getString("from_room"),
+                        resultSet.getString("message_content")),
             roomId
         );
     }
