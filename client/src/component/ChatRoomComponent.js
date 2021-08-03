@@ -1,16 +1,29 @@
 import React, {useEffect, useState} from 'react'
 import {Nav, Container, Row, Col} from 'react-bootstrap'
+import SockJsClient from 'react-stomp'
 
-function ChatRoom() {
+function ChatRoom(props) {
+
+    /* ===== ===== ===== chat room list state ===== ===== ===== */
     const [chatRoomList, setChatRoomList] = useState([]);
-    /* stub */
+       /* stub */
     useEffect(() => {
         setChatRoomList(orig => [...orig, "chatroom1", "chatroom2", "adminRoom"]);
     }, []);
 
+    /* ===== ===== ===== Websocket Config ===== ===== ===== */
+    const websocketConfig = {
+        socketUrl: "localhost://8080/websocket",
+        topicsUrl: "/topic/" + props.roomId
+    }
 
     return (
         <div className="chatroom-container">
+            <SockJsClient url={websocketConfig.socketUrl}
+                          topics={websocketConfig.topicsUrl}
+                          onMessage={(message) => {console.log(message)}}
+                          ref={ (client) => { this.clientRef = client }}
+            />
             <Container fluid>
                 <Row>
                     <Col md={3}>
