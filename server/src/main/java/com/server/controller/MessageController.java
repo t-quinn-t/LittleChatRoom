@@ -7,9 +7,9 @@ import com.server.model.User;
 import com.server.model_assembler.MessageModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @date: 2021-08-02 11:57 a.m.
  */
 @Controller
-@RequestMapping("/chat")
 public class MessageController {
 
     private final UserDao userDao;
@@ -32,8 +31,13 @@ public class MessageController {
         this.messageModelAssembler = messageModelAssembler;
     }
 
-    @GetMapping("/send-message")
-    @SendTo("/room/{roomId}")
+    /**
+     * Receiving messages at endpoint /send-message, and
+     * send it to destination at /topic/{proper chatroom} so that every subscriber to this chatroom will get
+     * notification
+     */
+    @MessageMapping("/send-message")
+    @SendTo("/topic/{roomId}")
     public EntityModel<Message> sendMessage(@RequestParam String message_content, @RequestParam Long userId,
                                             @RequestParam Long roomId) {
         User user = userDao.findByIdentifier(null, null, userId);
