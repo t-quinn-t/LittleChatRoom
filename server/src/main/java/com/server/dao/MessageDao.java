@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Repository
 public interface MessageDao {
-    public void save(Message message);
+    public Message save(Message message);
     public void delete(Message message);
     public Message getMessageByMessageId(Long messageId);
     public List<Message> getMessagesByRoomId(Long roomId);

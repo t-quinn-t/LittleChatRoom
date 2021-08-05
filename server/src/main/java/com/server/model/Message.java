@@ -10,9 +10,9 @@ public class Message {
     private Long roomId;
     private String content;
 
-    public Message(Long sender, Long room, String content) {
-        this.senderId = sender;
-        this.roomId = room;
+    public Message(Long senderId, Long roomId, String content) {
+        this.senderId = senderId;
+        this.roomId = roomId;
         this.content  = content;
     }
 
@@ -24,19 +24,19 @@ public class Message {
         this.id = id;
     }
 
-    public Long getSender() {
+    public Long getSenderId() {
         return senderId;
     }
 
-    public void setSender(Long sender) {
+    public void setSenderId(Long sender) {
         this.senderId = sender;
     }
 
-    public Long getRoom() {
+    public Long getRoomId() {
         return roomId;
     }
 
-    public void setRoom(Long room) {
+    public void setRoomId(Long room) {
         this.roomId = room;
     }
 

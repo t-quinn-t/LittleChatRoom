@@ -4,8 +4,11 @@ import com.server.dao.MessageDao;
 import com.server.model.Message;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 /**
@@ -17,14 +20,20 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
 
     public MessageDaoImpl(DataSource dataSource) {this.setDataSource(dataSource);}
 
-    public void save(Message message) {
+    public Message save(Message message) {
         if (getJdbcTemplate() == null) throw new NullPointerException();
-        this.getJdbcTemplate().update(
-                "INSERT INTO public.messages (from_user, from_room, message_content) VALUES (?,?,?)",
-                message.getSender(),
-                message.getRoom(),
-                message.getContent()
-        );
+        String sqlStr = "INSERT INTO public.messages (from_user, from_room, message_content) VALUES (?,?,?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        System.out.println(message.getContent());
+        this.getJdbcTemplate().update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sqlStr);
+            ps.setLong(1, message.getSenderId());
+            ps.setLong(2, message.getRoomId());
+            ps.setString(3, message.getContent());
+            return ps;
+        }, keyHolder);
+        message.setId(keyHolder.getKeyAs(Long.class));
+        return message;
     }
 
     public void delete(Message message) {

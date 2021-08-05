@@ -2,6 +2,7 @@ package com.server.controller;
 
 import com.server.dao.MessageDao;
 import com.server.dao.UserDao;
+import com.server.exception.UserNotFoundException;
 import com.server.model.Message;
 import com.server.model.User;
 import com.server.model_assembler.MessageModelAssembler;
@@ -12,8 +13,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author Qintu (Quinn) Tao
@@ -45,9 +44,14 @@ public class MessageController {
     @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}/")
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message) {
-        Long userId = message.getId();
-        System.out.println(userId);
-        User user = userDao.findByIdentifier(null, null, userId);
+        Long userId = message.getSenderId();
+        User user = userDao.findByIdentifier(null, null, 3L);
+        if (user == null)
+            throw new UserNotFoundException("unknown");
+
+        // if user found, register this message to repo
+        Message registeredMessaage = messageDao.save(message);
+        System.out.println(registeredMessaage.getId());
         // TODO: replace the roomId with actual roomId
         return messageModelAssembler.toModel(message);
     }
