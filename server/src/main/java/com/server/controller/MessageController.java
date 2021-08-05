@@ -10,6 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,10 +37,12 @@ public class MessageController {
      * send it to destination at /topic/{proper chatroom} so that every subscriber to this chatroom will get
      * notification
      */
+    @CrossOrigin(origins = {"http://localhost:3000"})
     @MessageMapping("/send-message")
     @SendTo("/topic/{roomId}")
     public EntityModel<Message> sendMessage(@RequestParam String message_content, @RequestParam Long userId,
                                             @RequestParam Long roomId) {
+        System.out.println("message received");
         User user = userDao.findByIdentifier(null, null, userId);
         // TODO: replace the roomId with actual roomId
         Message message = new Message(user.getUid(), 1L, message_content);

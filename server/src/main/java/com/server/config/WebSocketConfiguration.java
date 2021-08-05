@@ -17,7 +17,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Socket connection handler
-        registry.addEndpoint("/websocket").withSockJS();
+        registry.addEndpoint("/websocket").setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override
@@ -27,4 +27,6 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         // Message receiving endpoint, every message should go to "/chat/send-message/"
         registry.setApplicationDestinationPrefixes("/chat");
     }
+
+
 }

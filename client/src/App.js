@@ -6,6 +6,7 @@ import LogInPage from './component/auth/LogIn.js'
 import ChatRoom from "./component/ChatRoomComponent";
 
 function App() {
+
   let [isLoggedIn, setLoginStatus] = useState(false);
 
   let [currUser, setCurrentUser] = useState({

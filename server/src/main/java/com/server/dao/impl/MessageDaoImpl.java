@@ -39,8 +39,8 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
         return this.getJdbcTemplate().query(
             "SELECT * FROM public.messages WHERE from_room = ?",
                 (resultSet, i) -> new Message(
-                        resultSet.getString("from_user"),
-                        resultSet.getString("from_room"),
+                        resultSet.getLong("from_user"),
+                        resultSet.getLong("from_room"),
                         resultSet.getString("message_content")),
             roomId
         );

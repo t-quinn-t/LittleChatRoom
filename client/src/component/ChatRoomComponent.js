@@ -1,29 +1,36 @@
 import React, {useEffect, useState} from 'react'
-import {Nav, Container, Row, Col} from 'react-bootstrap'
-import SockJsClient from 'react-stomp'
+import {Nav, Container, Row, Col, Button} from 'react-bootstrap'
+import SockJS from 'sockjs-client'
+import Stomp from 'stompjs'
 
 function ChatRoom(props) {
+
+    /* ===== ===== ===== Websocket Config ===== ===== ===== */
+    const websocketConfig = {
+        socketUrl: "http://localhost:8080/websocket",
+        topicUrl: "/topic/" + props.roomId,
+        destinationURL: "/chat/send-message"
+    }
+    useEffect(() => {
+        let socket = new SockJS(websocketConfig.socketUrl)
+        let stompClient = Stomp.over(socket)
+        stompClient.connect({}, (frame) => {
+            console.log("connected" + frame)
+            stompClient.subscribe(websocketConfig.topicUrl, () => {
+                console.log("message received")
+            })
+        })
+    }, [])
 
     /* ===== ===== ===== chat room list state ===== ===== ===== */
     const [chatRoomList, setChatRoomList] = useState([]);
        /* stub */
     useEffect(() => {
-        setChatRoomList(orig => [...orig, "chatroom1", "chatroom2", "adminRoom"]);
+        setChatRoomList(orig => ["chatroom1", "chatroom2", "adminRoom"]);
     }, []);
-
-    /* ===== ===== ===== Websocket Config ===== ===== ===== */
-    const websocketConfig = {
-        socketUrl: "localhost://8080/websocket",
-        topicsUrl: "/topic/" + props.roomId
-    }
 
     return (
         <div className="chatroom-container">
-            <SockJsClient url={websocketConfig.socketUrl}
-                          topics={websocketConfig.topicsUrl}
-                          onMessage={(message) => {console.log(message)}}
-                          ref={ (client) => { this.clientRef = client }}
-            />
             <Container fluid>
                 <Row>
                     <Col md={3}>
@@ -33,7 +40,12 @@ function ChatRoom(props) {
                     })}
                         </Nav>
                     </Col>
-                    <Col md={9}>dd</Col>
+                    <Col md={9}>
+                        <Button onClick={() => {
+                            console.log("haha")
+
+                        }}/>
+                    </Col>
                 </Row>
             </Container>
         </div>
