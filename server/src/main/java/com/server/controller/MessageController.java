@@ -43,10 +43,10 @@ public class MessageController {
      */
     @CrossOrigin(origins = {"http://localhost:3000"})
     @MessageMapping("/send-to/{roomId}/")
-    @SendTo("/topic/{roomId}")
+    @SendTo("/topic/{roomId}/")
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message) {
         Long userId = message.getId();
-        System.out.println("userId");
+        System.out.println(userId);
         User user = userDao.findByIdentifier(null, null, userId);
         // TODO: replace the roomId with actual roomId
         return messageModelAssembler.toModel(message);

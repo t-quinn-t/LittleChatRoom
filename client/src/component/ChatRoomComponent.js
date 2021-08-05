@@ -7,21 +7,26 @@ function ChatRoom(props) {
 
     /* ===== ===== ===== Websocket ===== ===== ===== */
     const websocketConfig = {
-        socketUrl: "http://localhost:8080/websocket",
-        roomUrl: "/topic/" + props.roomId,
+        wsUrl: "http://localhost:8080/websocket",
+        roomUrl: "/topic/" + props.roomId + '/',
         echoUrl: "/chat/send-to/1/"
     }
+    const [isWSConnected, setWSConnectionStatus] = useState(false);
     const [stompClient, setStompClient] = useState(() => {
-        let socket = new SockJS(websocketConfig.socketUrl)
+        let socket = new SockJS(websocketConfig.wsUrl)
         let stompClient = Stomp.over(socket)
         stompClient.connect({}, (frame) => {
-            console.log("connected" + frame)
-            stompClient.subscribe(websocketConfig.roomUrl, () => {
-                console.log("message received")
-            })
+            console.log("connected" + frame);
+            setWSConnectionStatus(true);
         });
         return stompClient;
     })
+    useEffect(() => {
+        if (isWSConnected)
+            stompClient.subscribe(websocketConfig.roomUrl, (message) => {
+                console.log("message received" + message.body);
+            });
+    }, [isWSConnected]);
 
     /* ===== ===== ===== Chatrooms ===== ===== ===== */
     // TODO: close the correct list of chatrooms

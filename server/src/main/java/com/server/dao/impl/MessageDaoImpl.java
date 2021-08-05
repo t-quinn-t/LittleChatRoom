@@ -2,6 +2,7 @@ package com.server.dao.impl;
 
 import com.server.dao.MessageDao;
 import com.server.model.Message;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
@@ -32,6 +33,18 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
                 "DELETE FROM public.messages WHERE message_id = ?",
                 message.getId()
         );
+    }
+
+    public Message getMessageByMessageId(Long messageId) {
+        if (getJdbcTemplate() == null) throw new NullPointerException();
+        return DataAccessUtils.singleResult(getJdbcTemplate().query(
+                "SELECT * FROM public.messages WHERE from_room = ?",
+                (resultSet, i) -> new Message(
+                        resultSet.getLong("from_user"),
+                        resultSet.getLong("from_room"),
+                        resultSet.getString("message_content")),
+                messageId
+        ));
     }
 
     public List<Message> getMessagesByRoomId(Long roomId) {
