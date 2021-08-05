@@ -5,24 +5,26 @@ import Stomp from 'stompjs'
 
 function ChatRoom(props) {
 
-    /* ===== ===== ===== Websocket Config ===== ===== ===== */
+    /* ===== ===== ===== Websocket ===== ===== ===== */
     const websocketConfig = {
         socketUrl: "http://localhost:8080/websocket",
-        topicUrl: "/topic/" + props.roomId,
-        destinationURL: "/chat/send-message"
+        roomUrl: "/topic/" + props.roomId,
+        echoUrl: "/chat/send-message"
     }
-    useEffect(() => {
+    const [stompClient, setStompClient] = useState(() => {
         let socket = new SockJS(websocketConfig.socketUrl)
         let stompClient = Stomp.over(socket)
         stompClient.connect({}, (frame) => {
             console.log("connected" + frame)
-            stompClient.subscribe(websocketConfig.topicUrl, () => {
+            stompClient.subscribe(websocketConfig.roomUrl, () => {
                 console.log("message received")
             })
-        })
-    }, [])
+        });
+        return stompClient;
+    })
 
-    /* ===== ===== ===== chat room list state ===== ===== ===== */
+    /* ===== ===== ===== Chatrooms ===== ===== ===== */
+    // TODO: close the correct list of chatrooms
     const [chatRoomList, setChatRoomList] = useState([]);
        /* stub */
     useEffect(() => {
@@ -42,9 +44,12 @@ function ChatRoom(props) {
                     </Col>
                     <Col md={9}>
                         <Button onClick={() => {
-                            console.log("haha")
-
-                        }}/>
+                            stompClient.send(websocketConfig.echoUrl, {}, {
+                                'from_user': "default"
+                            });
+                        }}>
+                            Send
+                        </Button>
                     </Col>
                 </Row>
             </Container>
