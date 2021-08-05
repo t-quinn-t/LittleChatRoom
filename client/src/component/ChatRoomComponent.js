@@ -9,7 +9,7 @@ function ChatRoom(props) {
     const websocketConfig = {
         socketUrl: "http://localhost:8080/websocket",
         roomUrl: "/topic/" + props.roomId,
-        echoUrl: "/chat/send-message"
+        echoUrl: "/chat/send-to/1/"
     }
     const [stompClient, setStompClient] = useState(() => {
         let socket = new SockJS(websocketConfig.socketUrl)
@@ -44,9 +44,12 @@ function ChatRoom(props) {
                     </Col>
                     <Col md={9}>
                         <Button onClick={() => {
-                            stompClient.send(websocketConfig.echoUrl, {}, {
-                                'from_user': "default"
-                            });
+                            stompClient.send(websocketConfig.echoUrl, {}, JSON.stringify({
+                                'id': -1,
+                                'senderId': 1,
+                                'roomId': 1,
+                                'content': "hahaha"
+                            }));
                         }}>
                             Send
                         </Button>

@@ -7,6 +7,7 @@ import com.server.model.User;
 import com.server.model_assembler.MessageModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -36,16 +37,18 @@ public class MessageController {
      * Receiving messages at endpoint /send-message, and
      * send it to destination at /topic/{proper chatroom} so that every subscriber to this chatroom will get
      * notification
+     *
+     * The Message that sent to broker would have type <EntityModel<Message>>
+     *     the Message itself is of type <Message<EntityModel<Message>>>
      */
     @CrossOrigin(origins = {"http://localhost:3000"})
-    @MessageMapping("/send-message")
+    @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}")
-    public EntityModel<Message> sendMessage(@RequestParam String message_content, @RequestParam Long userId,
-                                            @RequestParam Long roomId) {
-        System.out.println("message received");
+    public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message) {
+        Long userId = message.getId();
+        System.out.println("userId");
         User user = userDao.findByIdentifier(null, null, userId);
         // TODO: replace the roomId with actual roomId
-        Message message = new Message(user.getUid(), 1L, message_content);
         return messageModelAssembler.toModel(message);
     }
 }

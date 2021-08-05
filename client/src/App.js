@@ -7,21 +7,28 @@ import ChatRoom from "./component/ChatRoomComponent";
 
 function App() {
 
+  /* ----- ----- ----- User Login ----- ----- ----- */
   let [isLoggedIn, setLoginStatus] = useState(false);
-
   let [currUser, setCurrentUser] = useState({
       uname: null,
       uid: -1,
       email: null
-  })
-
+  });
   let handleUserLogin = function (userObject) {
       if (userObject == null) return
       setLoginStatus(true);
       setCurrentUser({...currUser, email: userObject.email, uid: userObject.uid, uname: userObject.uname});
   }
 
-  return (
+    /* ----- ----- ----- Chatroom Status ----- ----- ----- */
+    let [chatRoom, setChatRoom] = useState(() => {
+        if (!isLoggedIn) {
+            alert("User not logged in; failed to load app");
+        }
+        // TODO: get ... chatroom :(
+    })
+
+    return (
     <div className="App">
         <Router>
             <Switch>
