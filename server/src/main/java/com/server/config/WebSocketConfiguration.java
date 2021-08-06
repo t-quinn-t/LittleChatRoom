@@ -26,8 +26,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // Message broker endpoint
-        registry.enableSimpleBroker("/queue");
-        // Message receiving endpoint, every message should go to "/chat/send-message/"
+        registry.enableSimpleBroker("/topic");
+        // Message receiving endpoint, every message should go to "/chat/send-to/"
         registry.setApplicationDestinationPrefixes("/chat");
     }
 

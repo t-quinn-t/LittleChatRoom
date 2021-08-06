@@ -24,7 +24,6 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         String sqlStr = "INSERT INTO public.messages (from_user, from_room, message_content) VALUES (?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        System.out.println(message.getContent());
         this.getJdbcTemplate().update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sqlStr);
             ps.setLong(1, message.getSenderId());

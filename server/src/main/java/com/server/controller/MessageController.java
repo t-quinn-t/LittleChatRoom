@@ -51,8 +51,7 @@ public class MessageController {
 
         // if user found, register this message to repo
         Message registeredMessaage = messageDao.save(message);
-        System.out.println(registeredMessaage.getId());
         // TODO: replace the roomId with actual roomId
-        return messageModelAssembler.toModel(message);
+        return messageModelAssembler.toModel(registeredMessaage);
     }
 }
