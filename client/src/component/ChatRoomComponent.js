@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react'
-import {Nav, Container, Row, Col, Button} from 'react-bootstrap'
+import {Nav, Container, Row, Col, Button, Form} from 'react-bootstrap'
 import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
+import './style/chatRoomStyle.css'
 
 function ChatRoom(props) {
 
@@ -36,6 +37,13 @@ function ChatRoom(props) {
         setChatRoomList(orig => ["chatroom1", "chatroom2", "adminRoom"]);
     }, []);
 
+    /* ===== ===== ===== Messaging ===== ===== ===== */
+    let [messageSet, setMessageSet] = useState(() => {
+        // TODO: get list of init message to display
+        return []
+    });
+    let [currentTypingMessage, setCurrentTypingMessage] = useState("");
+
     return (
         <div className="chatroom-container">
             <Container fluid>
@@ -48,16 +56,32 @@ function ChatRoom(props) {
                         </Nav>
                     </Col>
                     <Col md={9}>
-                        <Button onClick={() => {
+                        <div className="chatroom-scroller">
+                            Hello World
+                        </div>
+                        <Form onSubmit={() => {
                             stompClient.send(websocketConfig.echoUrl, {}, JSON.stringify({
                                 'id': -1,
                                 'senderId': 1,
                                 'roomId': 1,
-                                'content': "hahaha"
+                                'content': currentTypingMessage
                             }));
                         }}>
-                            Send
-                        </Button>
+                            <Row>
+                                <Form.Group as={Col} md="1" controlId="send-button">
+                                    <Button variant="primary" type="submit">
+                                        Send
+                                    </Button>
+                                </Form.Group>
+                                <Form.Group as={Col} md="10" controlId="get-message-body">
+                                    <Form.Control type="text" placeholder="type something" className="message-text-input"
+                                    onChange={(event) => {
+                                        setCurrentTypingMessage(event.target.value);
+                                    }}/>
+                                </Form.Group>
+                            </Row>
+                        </Form>
+
                     </Col>
                 </Row>
             </Container>

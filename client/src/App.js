@@ -20,14 +20,6 @@ function App() {
       setCurrentUser({...currUser, email: userObject.email, uid: userObject.uid, uname: userObject.uname});
   }
 
-    /* ----- ----- ----- Chatroom Status ----- ----- ----- */
-    let [chatRoom, setChatRoom] = useState(() => {
-        if (!isLoggedIn) {
-            alert("User not logged in; failed to load app");
-        }
-        // TODO: get ... chatroom :(
-    })
-
     return (
     <div className="App">
         <Router>

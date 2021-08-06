@@ -13,11 +13,13 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author Qintu (Quinn) Tao
  * @date: 2021-08-02 11:57 a.m.
  */
+@CrossOrigin(origins = {"http://localhost:3000"})
 @Controller
 public class MessageController {
 
@@ -40,7 +42,6 @@ public class MessageController {
      * The Message that sent to broker would have type <EntityModel<Message>>
      *     the Message itself is of type <Message<EntityModel<Message>>>
      */
-    @CrossOrigin(origins = {"http://localhost:3000"})
     @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}/")
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message) {
@@ -54,4 +55,5 @@ public class MessageController {
         // TODO: replace the roomId with actual roomId
         return messageModelAssembler.toModel(registeredMessaage);
     }
+
 }
