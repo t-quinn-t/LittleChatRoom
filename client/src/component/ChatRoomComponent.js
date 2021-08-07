@@ -38,11 +38,17 @@ function ChatRoom(props) {
     }, []);
 
     /* ===== ===== ===== Messaging ===== ===== ===== */
-    let [messageSet, setMessageSet] = useState(() => {
-        // TODO: get list of init message to display
-        return []
-    });
+    let [messageSet, setMessageSet] = useState([]);
     let [currentTypingMessage, setCurrentTypingMessage] = useState("");
+    useEffect(() => {
+        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId;
+        fetch(getMessagesReqURL).then(response => response.json()).then(
+            res => {
+                const messages = res._embedded.messages;
+                setMessageSet(messages);
+            }
+        );
+    }, [])
 
     return (
         <div className="chatroom-container">
@@ -57,7 +63,11 @@ function ChatRoom(props) {
                     </Col>
                     <Col md={9}>
                         <div className="chatroom-scroller">
-                            Hello World
+                            <ul>
+                                {messageSet.map((message) => {
+                                    return <li>{message.content}</li>
+                                })}
+                            </ul>
                         </div>
                         <Form onSubmit={() => {
                             stompClient.send(websocketConfig.echoUrl, {}, JSON.stringify({

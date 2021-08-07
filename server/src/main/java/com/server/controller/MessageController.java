@@ -7,20 +7,22 @@ import com.server.model.Message;
 import com.server.model.User;
 import com.server.model_assembler.MessageModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Qintu (Quinn) Tao
  * @date: 2021-08-02 11:57 a.m.
  */
 @CrossOrigin(origins = {"http://localhost:3000"})
-@Controller
+@RestController
 public class MessageController {
 
     private final UserDao userDao;
@@ -46,14 +48,20 @@ public class MessageController {
     @SendTo("/topic/{roomId}/")
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message) {
         Long userId = message.getSenderId();
-        User user = userDao.findByIdentifier(null, null, 3L);
+        User user = userDao.findByIdentifier(null, null, userId);
         if (user == null)
             throw new UserNotFoundException("unknown");
 
-        // if user found, register this message to repo
-        Message registeredMessaage = messageDao.save(message);
-        // TODO: replace the roomId with actual roomId
-        return messageModelAssembler.toModel(registeredMessaage);
+        Message registeredMessage = messageDao.save(message);
+        return messageModelAssembler.toModel(registeredMessage);
+    }
+
+    @CrossOrigin(origins = {"http://localhost:3000"})
+    @GetMapping("/get-messages/{roomId}")
+    public CollectionModel<EntityModel<Message>> getMessagesFromRoom(@PathVariable Long roomId) {
+        List<Message> messagesFromRoom = messageDao.getMessagesByRoomId(roomId);
+        System.out.println("sending message lists");
+        return messageModelAssembler.toCollectionModel(messagesFromRoom);
     }
 
 }

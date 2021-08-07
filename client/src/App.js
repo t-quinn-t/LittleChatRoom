@@ -26,7 +26,7 @@ function App() {
             <Switch>
                 <Route path="/" component={() => <LogInPage userLoginHandler={handleUserLogin}/>} exact />
                 {/*Todo: Change the chatroom id to proper chatroom */}
-                <Route path="/chatroom" component={() => <ChatRoom roomId={1}/>}/>
+                <Route path="/chatroom" component={() => <ChatRoom roomId={1} uid={currUser.uid}/>}/>
             </Switch>
         </Router>
     </div>

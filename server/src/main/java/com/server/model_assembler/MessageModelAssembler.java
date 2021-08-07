@@ -7,6 +7,9 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Qintu (Quinn) Tao
  * @date: 2021-08-02 4:08 p.m.
@@ -21,6 +24,10 @@ public class MessageModelAssembler implements RepresentationModelAssembler<Messa
 
     @Override
     public CollectionModel<EntityModel<Message>> toCollectionModel(Iterable<? extends Message> entities) {
-        return null;
+        Collection<EntityModel<Message>> messageList = new ArrayList<>();
+        for (Message message: entities) {
+            messageList.add(EntityModel.of(message));
+        }
+        return CollectionModel.of(messageList);
     }
 }
