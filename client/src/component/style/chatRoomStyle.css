@@ -1,6 +1,20 @@
 .chatroom-scroller {
     height: 90vh;
 }
+.chatroom-scroller ul {
+    list-style: none;
+    display: block;
+    width: 100%;
+}
+.chatroom-message-wrapper {
+    margin: 5px;
+    padding: 5px;
+    display: inline-block;
+    background: slateblue;
+    border-radius: 3px;
+    color: white;
+}
+
 .message-text-input {
     height: 50px
 }

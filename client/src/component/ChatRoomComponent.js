@@ -65,7 +65,7 @@ function ChatRoom(props) {
                         <div className="chatroom-scroller">
                             <ul>
                                 {messageSet.map((message) => {
-                                    return <li>{message.content}</li>
+                                    return <li><div className="chatroom-message-wrapper">{message.content}</div></li>
                                 })}
                             </ul>
                         </div>
