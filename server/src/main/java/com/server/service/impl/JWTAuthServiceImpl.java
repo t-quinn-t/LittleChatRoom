@@ -23,10 +23,15 @@ public class JWTAuthServiceImpl implements JWTAuthService {
         Security.addProvider(new BouncyCastleProvider());
         ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
         try {
+            /* ===== ===== ===== Generating KeyPairs ===== ===== ===== */
+            logger.info("Generating Public/Private key pairs");
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA");
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
             PublicKey publicKey = (ECPublicKey) keyPair.getPublic();
             PrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
+
+            /* ===== ===== ===== Storing KeyPairs ===== ===== ===== */
+
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot Generate Public/Private Keys with ECDSA");
         }
