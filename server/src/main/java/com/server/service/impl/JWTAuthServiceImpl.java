@@ -30,7 +30,6 @@ import java.util.Date;
  * @date: 2021-08-07 12:24 p.m.
  */
 
-
 public class JWTAuthServiceImpl implements JWTAuthService {
 
     private final ECGenParameterSpec ecGenParameterSpec;
