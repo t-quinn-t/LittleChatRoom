@@ -6,8 +6,13 @@ import com.server.exception.PasswordSameException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
+import com.server.service.JWTAuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +24,16 @@ public class UserController {
     private final UserDao userDao;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserModelAssembler assembler;
+    private final JWTAuthService jwtService;
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler) {
+    public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler,
+                          JWTAuthService jwtService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.assembler = assembler;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/test-connection")
@@ -45,23 +54,37 @@ public class UserController {
         return "New User Registered";
     }
 
+    /**
+     * This Login needs to return an repsonseEntity in order to include the
+     *   generated json web token in the header
+     * @return
+     */
     @GetMapping("/login")
-    public EntityModel<User> login(@RequestParam(name="identifier") String identifier,
-                                   @RequestParam CharSequence password) {
+    public ResponseEntity<EntityModel<User>> login(@RequestParam(name="identifier") String identifier,
+                                @RequestParam CharSequence password) {
 
-        // find user
+        /* ===== ===== ===== find user ===== ===== ===== */
+        logger.info("check user existence");
         User locatedUser = userDao.findByIdentifier(identifier, "uname", (long) -1);
         if (locatedUser == null)
             locatedUser = userDao.findByIdentifier(identifier, "email", (long) -1);
         if (locatedUser == null)
             throw new UserNotFoundException(identifier);
 
-        // user password match-up
+        /* ===== ===== ===== check password ===== ===== ===== */
+        logger.info("Verify User");
         if (!passwordEncoder.matches(password, locatedUser.getPassword()))
             throw new CredentialFailureException();
 
-        // login succeed
-        return assembler.toModel(locatedUser);
+        /* ===== ===== ===== generate jwt ===== ===== ===== */
+        logger.info("Generating token");
+        String token = jwtService.generateToken(locatedUser);
+
+        /* ===== ===== ===== assemble response ===== ===== ===== */
+        ResponseEntity<EntityModel<User>> response =
+                ResponseEntity.ok().header(token).body(assembler.toModel(locatedUser));
+        logger.info("response assembled");
+        return response;
     }
 
     @PostMapping("/update")
