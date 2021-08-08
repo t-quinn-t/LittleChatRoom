@@ -4,16 +4,11 @@ import com.server.dao.ECKeyPairDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Qintu (Quinn) Tao
@@ -37,7 +32,9 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
 
     @Override
     public void deregisterKeyPair(byte[] targetPublicKeyByteData) {
-
+        if (this.getJdbcTemplate() == null) throw new NullPointerException();
+        String sql = "DELETE FROM public.ec_keypairs WHERE public_key = ?";
+        this.getJdbcTemplate().update(sql, new Object[] {targetPublicKeyByteData});
     }
 
     @Override
