@@ -5,8 +5,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.server.dao.ECKeyPairDao;
+import com.server.exception.UserTokenExpiredException;
 import com.server.model.User;
 import com.server.service.JWTAuthService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -27,6 +29,8 @@ import java.util.Date;
  * @author Qintu (Quinn) Tao
  * @date: 2021-08-07 12:24 p.m.
  */
+
+
 public class JWTAuthServiceImpl implements JWTAuthService {
 
     private final ECGenParameterSpec ecGenParameterSpec;
@@ -114,6 +118,15 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             logger.error("Cannot retrieve specified key spec: \n {}", e.getMessage());
         } catch (JWTCreationException e) {
             logger.error("Cannot create jwt verifier instance: \n {}", e.getMessage());
+        } catch (TokenExpiredException e) {
+            // Special case where user token is expired
+            
+            /* ===== ===== ===== Remove Keypairs from keystore ===== ===== ===== */
+            logger.info("Removing keypair from keystore as token is expired");
+            keystore.deregisterKeyPair(publicKeyByteData);
+
+            /* ===== ===== ===== Throw Exception to client ===== ===== ===== */
+            throw new UserTokenExpiredception();
         } catch (JWTVerificationException e) {
             logger.error("Bad token");
         }
