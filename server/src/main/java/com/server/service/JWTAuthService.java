@@ -1,5 +1,6 @@
 package com.server.service;
 
+import com.server.model.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,6 +9,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface JWTAuthService {
-    public String generateToken();
-    public void verifyToken(String token);
+    public String generateToken(User user);
+    public boolean verifyToken(String token, byte[] publicKeyByteData, User claimingUser);
 }
