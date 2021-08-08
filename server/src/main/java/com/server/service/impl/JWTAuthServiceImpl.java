@@ -62,7 +62,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
             logger.info("Generating new tokens using generated keypair");
-            Algorithm algorithm = Algorithm.ECDSA256K((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
+            Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             String token = JWT.create()
                     .withIssuer(this.issuer)
                     .withExpiresAt(new Date(LocalDate.now().plusDays(1L).toEpochDay()))
@@ -99,7 +99,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Verify token ===== ===== ===== */
             logger.info("Getting ");
-            Algorithm algorithm = Algorithm.ECDSA256K((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
+            Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(this.issuer)
                     .withClaim("uid", claimingUser.getUid())
