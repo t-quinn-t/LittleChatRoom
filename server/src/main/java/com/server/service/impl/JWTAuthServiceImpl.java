@@ -126,7 +126,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             keystore.deregisterKeyPair(publicKeyByteData);
 
             /* ===== ===== ===== Throw Exception to client ===== ===== ===== */
-            throw new UserTokenExpiredception();
+            throw new UserTokenExpiredException();
         } catch (JWTVerificationException e) {
             logger.error("Bad token");
         }
