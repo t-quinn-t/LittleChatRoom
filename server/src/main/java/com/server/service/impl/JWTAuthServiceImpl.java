@@ -15,6 +15,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
@@ -29,7 +31,7 @@ import java.util.Date;
  * @author Qintu (Quinn) Tao
  * @date: 2021-08-07 12:24 p.m.
  */
-
+@Component
 public class JWTAuthServiceImpl implements JWTAuthService {
 
     private final ECGenParameterSpec ecGenParameterSpec;
