@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import './LogIn.css';
 import {Alert} from "react-bootstrap";
 import {useHistory} from 'react-router-dom';
-
+import reportWebVitals from "../../reportWebVitals";
 
 export default function LogInPage(props) {
+
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
@@ -12,11 +13,15 @@ export default function LogInPage(props) {
 
     async function submitForm () {
         let url = "http://localhost:8080/user/login?identifier="+userName+"&password="+password;
+        let token = '';
         const response = await fetch(url,{
             method:"GET",
         })
             .then(response => {
+                let k = response.headers.get("token");
+
                 if (response.ok) {
+
                     return response.json();
                 } else {
                     return response.text();

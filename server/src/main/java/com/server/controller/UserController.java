@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(value = {"http://localhost:8080","http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"})
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -60,6 +60,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/login")
+    @CrossOrigin(allowedHeaders = {"token"}, origins = "http://localhost:3000")
     public ResponseEntity<EntityModel<User>> login(@RequestParam(name="identifier") String identifier,
                                 @RequestParam CharSequence password) {
 
@@ -82,7 +83,7 @@ public class UserController {
 
         /* ===== ===== ===== assemble response ===== ===== ===== */
         ResponseEntity<EntityModel<User>> response =
-                ResponseEntity.ok().header(token).body(assembler.toModel(locatedUser));
+                ResponseEntity.ok().header("token", token).body(assembler.toModel(locatedUser));
         logger.info("response assembled");
         return response;
     }

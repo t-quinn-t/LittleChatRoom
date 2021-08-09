@@ -4,32 +4,39 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import LogInPage from './component/auth/LogIn.js'
 import ChatRoom from "./component/ChatRoomComponent";
+import { useCookies } from "react-cookie";
 
 function App() {
 
-  /* ----- ----- ----- User Login ----- ----- ----- */
-  let [isLoggedIn, setLoginStatus] = useState(false);
-  let [currUser, setCurrentUser] = useState({
+  /* ===== ===== ===== User Login ===== ===== ===== */
+  const [isLoggedIn, setLoginStatus] = useState(false);
+  const [currUser, setCurrentUser] = useState({
       uname: null,
       uid: -1,
       email: null
   });
-  let handleUserLogin = function (userObject) {
-      if (userObject == null) return
-      setLoginStatus(true);
-      setCurrentUser({...currUser, email: userObject.email, uid: userObject.uid, uname: userObject.uname});
+    const [cookies, setCookies, removeCookies] = useCookies(['jwt']);
+    let handleUserLogin = function (responseObject) {
+        if (responseObject == null) return
+        setLoginStatus(true);
+        setCurrentUser({...currUser, email: responseObject.email, uid: responseObject.uid, uname: responseObject.uname});
+
+        console.log(responseObject)
+        setCookies('jwt', responseObject.headers.get('text'));
   }
 
+
     return (
-    <div className="App">
-        <Router>
-            <Switch>
-                <Route path="/" component={() => <LogInPage userLoginHandler={handleUserLogin}/>} exact />
-                {/*Todo: Change the chatroom id to proper chatroom */}
-                <Route path="/chatroom" component={() => <ChatRoom roomId={1} uid={currUser.uid}/>}/>
-            </Switch>
-        </Router>
-    </div>
+        <div className="App">
+            <Router>
+                <Switch>
+                    <Route path="/" component={() => <LogInPage userLoginHandler={handleUserLogin}/>} exact />
+                    {/*Todo: Change the chatroom id to proper chatroom */}
+                    <Route path="/chatroom" component={() => <ChatRoom roomId={1} uid={currUser.uid}/>}/>
+                </Switch>
+            </Router>
+        </div>
+
   );
 }
 
