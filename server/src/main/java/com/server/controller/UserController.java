@@ -10,8 +10,8 @@ import com.server.service.JWTAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class UserController {
 
     @Autowired
     public UserController(UserDao userDao, BCryptPasswordEncoder passwordEncoder, UserModelAssembler assembler,
-                          JWTAuthService jwtService) {
+                          @Qualifier("jwtservice") JWTAuthService jwtService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.assembler = assembler;
@@ -57,10 +57,10 @@ public class UserController {
     /**
      * This Login needs to return an repsonseEntity in order to include the
      *   generated json web token in the header
-     * @return
+     * @return the entity model of user
      */
     @GetMapping("/login")
-    @CrossOrigin(allowedHeaders = {"token"}, origins = "http://localhost:3000")
+    @CrossOrigin(allowedHeaders = {"token"}, origins = "http://localhost:3000", exposedHeaders = {"token"})
     public ResponseEntity<EntityModel<User>> login(@RequestParam(name="identifier") String identifier,
                                 @RequestParam CharSequence password) {
 
