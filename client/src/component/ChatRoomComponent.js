@@ -3,8 +3,11 @@ import {Nav, Container, Row, Col, Button, Form} from 'react-bootstrap'
 import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 import './style/chatRoomStyle.css'
+import {useAuth} from "./auth/auth";
 
 function ChatRoom(props) {
+
+    const auth = useAuth();
 
     /* ===== ===== ===== Websocket ===== ===== ===== */
     const websocketConfig = {
@@ -50,6 +53,23 @@ function ChatRoom(props) {
         );
     }, [])
 
+    /**
+     * Sends the message (json) over stomp;
+     *   the header of this message is the token generated when user logged in
+     */
+    const sendMessage = function () {
+        // pass the jwt as stomp header
+        const headers = {
+            token: auth.token
+        }
+        stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
+            'id': -1,
+            'senderId': props.uid,
+            'roomId': props.roomId,
+            'content': currentTypingMessage
+        }));
+    }
+
     return (
         <div className="chatroom-container">
             <Container fluid>
@@ -69,14 +89,7 @@ function ChatRoom(props) {
                                 })}
                             </ul>
                         </div>
-                        <Form onSubmit={() => {
-                            stompClient.send(websocketConfig.echoUrl, {}, JSON.stringify({
-                                'id': -1,
-                                'senderId': 1,
-                                'roomId': 1,
-                                'content': currentTypingMessage
-                            }));
-                        }}>
+                        <Form onSubmit={sendMessage}>
                             <Row>
                                 <Form.Group as={Col} md="1" controlId="send-button">
                                     <Button variant="primary" type="submit">

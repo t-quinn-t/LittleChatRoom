@@ -2,13 +2,16 @@ import React, {useState} from 'react';
 import './LogIn.css';
 import {Alert} from "react-bootstrap";
 import {useHistory} from 'react-router-dom';
-import reportWebVitals from "../../reportWebVitals";
+import {useAuth} from "./auth";
 
 export default function LogInPage(props) {
 
+    // these are states for form, the actual user authentication state is stored
+    //   globally in useAuth hook
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+    const auth = useAuth();
     let history = useHistory();
 
     async function submitForm () {
@@ -18,10 +21,8 @@ export default function LogInPage(props) {
             method:"GET",
         })
             .then(response => {
-                let k = response.headers.get("token");
-
                 if (response.ok) {
-
+                    token = response.headers.get("token");
                     return response.json();
                 } else {
                     return response.text();
@@ -37,7 +38,7 @@ export default function LogInPage(props) {
             })
             .catch(error=>console.log(error));
         if (response != null) {
-            props.userLoginHandler(response);
+            auth.logIn(response, token);
             history.push("chatroom");
         }
     }
