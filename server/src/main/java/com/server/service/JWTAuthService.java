@@ -10,6 +10,25 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface JWTAuthService {
-    public String generateToken(User user);
+
+    class JWTAuthServiceTokenPackage {
+        private final String token;
+        private final byte[] publicKeyByteData;
+
+        public JWTAuthServiceTokenPackage(String token, byte[] publicKeyByteData) {
+            this.token = token;
+            this.publicKeyByteData = publicKeyByteData;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public byte[] getPublicKey() {
+            return publicKeyByteData;
+        }
+    }
+
+    public JWTAuthServiceTokenPackage generateToken(User user);
     public boolean verifyToken(String token, byte[] publicKeyByteData, User claimingUser);
 }
