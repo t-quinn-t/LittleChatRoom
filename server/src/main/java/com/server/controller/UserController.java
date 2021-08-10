@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 @CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"})
 @RestController
 @RequestMapping("/user")
@@ -60,7 +62,8 @@ public class UserController {
      * @return the entity model of user
      */
     @GetMapping("/login")
-    @CrossOrigin(allowedHeaders = {"token"}, origins = "http://localhost:3000", exposedHeaders = {"token"})
+    @CrossOrigin(allowedHeaders = {"token"}, origins = "http://localhost:3000", exposedHeaders = {"token", "public" +
+            "-key"})
     public ResponseEntity<EntityModel<User>> login(@RequestParam(name="identifier") String identifier,
                                 @RequestParam CharSequence password) {
 
@@ -79,11 +82,12 @@ public class UserController {
 
         /* ===== ===== ===== generate jwt ===== ===== ===== */
         logger.info("Generating token");
-        String token = jwtService.generateToken(locatedUser);
+        JWTAuthService.JWTAuthServiceTokenPackage tokenPackage = jwtService.generateToken(locatedUser);
 
         /* ===== ===== ===== assemble response ===== ===== ===== */
         ResponseEntity<EntityModel<User>> response =
-                ResponseEntity.ok().header("token", token).body(assembler.toModel(locatedUser));
+                ResponseEntity.ok().header("token", tokenPackage.getToken()).header("publick-key",
+                        Arrays.toString(tokenPackage.getPublicKey())).body(assembler.toModel(locatedUser));
         logger.info("response assembled");
         return response;
     }

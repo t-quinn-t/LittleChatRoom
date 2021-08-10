@@ -42,6 +42,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
     private final String issuer = "littlechatroom";
 
+
+
     @Autowired
     public JWTAuthServiceImpl(ECKeyPairDao keystore) {
         this.keystore = keystore;
@@ -49,7 +51,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    public String generateToken(User user) throws RuntimeException {
+    public JWTAuthServiceTokenPackage generateToken(User user) throws RuntimeException {
 
         try {
             /* ===== ===== ===== Generating KeyPairs ===== ===== ===== */
@@ -75,7 +77,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
                     .withClaim("email", user.getEmail())
                     .sign(algorithm);
             logger.info("Successfully generated json web token");
-            return token;
+            return new JWTAuthServiceTokenPackage(token, publicKey.getEncoded());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot generate public/private keys with ECDSA. No algorithm found.");
         } catch (InvalidAlgorithmParameterException e) {

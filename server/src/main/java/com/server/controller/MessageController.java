@@ -6,12 +6,15 @@ import com.server.exception.UserNotFoundException;
 import com.server.model.Message;
 import com.server.model.User;
 import com.server.model_assembler.MessageModelAssembler;
+import com.server.service.JWTAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -28,15 +31,18 @@ import java.util.List;
 public class MessageController {
 
     private final UserDao userDao;
+    private final JWTAuthService jwtAuthService;
     private final MessageDao messageDao;
     private final MessageModelAssembler messageModelAssembler;
     private final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
     @Autowired
-    public MessageController(UserDao userDao, MessageDao messageDao, MessageModelAssembler messageModelAssembler) {
+    public MessageController(UserDao userDao, MessageDao messageDao, MessageModelAssembler messageModelAssembler,
+                             @Qualifier("jwtservice") JWTAuthService jwtAuthService) {
         this.userDao = userDao;
         this.messageDao = messageDao;
         this.messageModelAssembler = messageModelAssembler;
+        this.jwtAuthService = jwtAuthService;
     }
 
     /**
@@ -47,14 +53,16 @@ public class MessageController {
      * The Message that sent to broker would have type <EntityModel<Message>>
      *     the Message itself is of type <Message<EntityModel<Message>>>
      */
+    @CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "token")
     @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}/")
-    public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message) {
+    public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message, @Header String token) {
         logger.info("Message Received from chatroom:" + roomId);
         Long userId = message.getSenderId();
         User user = userDao.findByIdentifier(null, null, userId);
         if (user == null)
             throw new UserNotFoundException("unknown");
+
         Message registeredMessage = messageDao.save(message);
         logger.info("Message sending to broker under /topic/"+roomId);
         return messageModelAssembler.toModel(registeredMessage);
