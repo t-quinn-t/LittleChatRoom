@@ -1,11 +1,37 @@
 import React, {useState} from 'react'
-import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
+import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import LogInPage from './component/auth/LogIn.js'
 import ChatRoom from "./component/ChatRoomComponent";
-import { useCookies } from "react-cookie";
-import {ProvideAuth} from "./component/auth/auth";
+import {ProvideAuth, useAuth} from "./component/auth/auth";
+
+/**
+ * Redirects to Login if user not logged in;
+ * Inspired from https://reactrouter.com/web/example/auth-workflow
+ * @author Quinn Tao
+ * @date Aug 9, 2021
+ */
+function PrivateRoute({ children, ...rest }) {
+    let auth = useAuth();
+    return (
+        <Route
+            {...rest}
+            render={({ location }) => {
+                alert(auth.user.uid)
+                return auth.user.uid !== -1 ? ( children) : (
+                        <Redirect
+                            to={{
+                                pathname: "/",
+                                state: { from: location }
+                            }}
+                        />
+                    )
+                }
+            }
+        />
+    );
+}
 
 function App() {
   return (
@@ -15,7 +41,9 @@ function App() {
                   <Switch>
                       <Route path="/" component={() => <LogInPage/>} exact />
                       {/*Todo: Change the chatroom id to proper chatroom */}
-                      <Route path="/chatroom" component={() => <ChatRoom roomId={1} uid={1}/>}/>
+                      <PrivateRoute path="/chatroom">
+                          <ChatRoom roomId={1} uid={1}/>
+                      </PrivateRoute>
                   </Switch>
               </Router>
           </div>
