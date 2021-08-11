@@ -19,7 +19,7 @@ function PrivateRoute({ children, ...rest }) {
             {...rest}
             render={({ location }) => {
                 alert(auth.user.uid)
-                return auth.user.uid !== -1 ? ( children) : (
+                return auth.status === true ? ( children) : (
                         <Redirect
                             to={{
                                 pathname: "/",

@@ -32,11 +32,14 @@ function ChatRoom(props) {
             });
     }, [isWSConnected]);
 
+    // TODO: token + public key -> payload
+
     /* ===== ===== ===== Chatrooms ===== ===== ===== */
-    // TODO: close the correct list of chatrooms
+    // TODO: render the correct list of chatrooms
     const [chatRoomList, setChatRoomList] = useState([]);
        /* stub */
     useEffect(() => {
+
         setChatRoomList(orig => ["chatroom1", "chatroom2", "adminRoom"]);
     }, []);
 

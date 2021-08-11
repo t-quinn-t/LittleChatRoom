@@ -34,13 +34,14 @@ function useProvideAuth() {
         uid: -1,
         email: null
     });
-    const [cookies, setCookies, removeCookies] = useCookies(['token']);
+    const [cookies, setCookies, removeCookies] = useCookies(['token', 'publicKey']);
 
-    let handleUserLogin = function (user, token) {
+    let handleUserLogin = function (user, token, publicKey) {
         if (user == null) return;
         setLoginStatus(true);
         setCurrentUser({...currUser, email: user.email, uid: user.uid, uname: user.uname});
         setCookies('token', token);
+        setCookies('public-key', publicKey);
     }
 
     let handleUserLogout = function (user, token) {
@@ -53,6 +54,8 @@ function useProvideAuth() {
     let getToken = function () {
         return cookies.token;
     }
+
+    // Todo: use effect
 
     return {
         status: isLoggedIn,

@@ -25,6 +25,7 @@ export default function LogInPage(props) {
                     token = response.headers.get("token");
                     return response.json();
                 } else {
+                    // response body is text
                     return response.text();
                 }
             })
