@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+<<<<<<< HEAD
+=======
+import org.springframework.stereotype.Service;
+>>>>>>> 6a99a26f813126506e28b262fee9c1db91fa6c44
 
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;

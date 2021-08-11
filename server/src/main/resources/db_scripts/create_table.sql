@@ -24,9 +24,12 @@ $$ language plpgsql;
 
 drop trigger if exists update_users on users;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 19b30ee... implmented private/public keypair storing facility
+=======
+>>>>>>> 6a99a26f813126506e28b262fee9c1db91fa6c44
 create trigger update_users
 	before update on users
 	for each row 
