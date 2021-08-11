@@ -22,6 +22,8 @@ $$
 	end;
 $$ language plpgsql;
 
+drop trigger if exists update_users on users;
+
 create trigger update_users
 	before update on users
 	for each row 
