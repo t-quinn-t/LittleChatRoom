@@ -17,10 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-<<<<<<< HEAD
-=======
-import org.springframework.stereotype.Service;
->>>>>>> 6a99a26f813126506e28b262fee9c1db91fa6c44
 
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
@@ -29,6 +25,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -99,10 +96,10 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             /* ===== ===== ===== Retrieving Private Key ===== ===== ===== */
             logger.info("Retrieving private key from database");
             byte[] privateKeyByteData = keystore.getPrivateKeyByteData(publicKeyByteData);
-
             /* ===== ===== ===== Restore keypair from byte data ===== ===== ===== */
             logger.info("Retrieving keypair from their byte data");
             KeyFactory factory = KeyFactory.getInstance("ECDSA");
+            logger.warn(Arrays.toString(privateKeyByteData));
             PrivateKey privateKey = factory.generatePrivate(new X509EncodedKeySpec(privateKeyByteData));
             PublicKey publicKey = factory.generatePublic(new X509EncodedKeySpec(publicKeyByteData));
 

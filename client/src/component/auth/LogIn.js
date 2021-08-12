@@ -17,12 +17,14 @@ export default function LogInPage(props) {
     async function submitForm () {
         let url = "http://localhost:8080/user/login?identifier="+userName+"&password="+password;
         let token = '';
+        let publicKey = null;
         const response = await fetch(url,{
             method:"GET",
         })
             .then(response => {
                 if (response.ok) {
                     token = response.headers.get("token");
+                    publicKey = response.headers.get("public-key");
                     return response.json();
                 } else {
                     // response body is text
@@ -39,7 +41,7 @@ export default function LogInPage(props) {
             })
             .catch(error=>console.log(error));
         if (response != null) {
-            auth.logIn(response, token);
+            auth.logIn(response, token, publicKey);
             history.push("chatroom");
         }
     }

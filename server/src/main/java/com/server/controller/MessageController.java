@@ -1,5 +1,6 @@
 package com.server.controller;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.server.dao.MessageDao;
 import com.server.dao.UserDao;
 import com.server.exception.UserNotFoundException;
@@ -56,16 +57,22 @@ public class MessageController {
     @CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "token")
     @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}/")
-    public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message, @Header String token) {
+    public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message, @Header String token,
+                                            @Header String publicKey) {
         logger.info("Message Received from chatroom:" + roomId);
         Long userId = message.getSenderId();
         User user = userDao.findByIdentifier(null, null, userId);
         if (user == null)
             throw new UserNotFoundException("unknown");
-
-        Message registeredMessage = messageDao.save(message);
-        logger.info("Message sending to broker under /topic/"+roomId);
-        return messageModelAssembler.toModel(registeredMessage);
+        logger.info("Verifying Token");
+        if (jwtAuthService.verifyToken(token, publicKey.getBytes(), user)) {
+            Message registeredMessage = messageDao.save(message);
+            logger.info("Message sending to broker under /topic/"+roomId);
+            return messageModelAssembler.toModel(registeredMessage);
+        }
+        else {
+            throw new TokenExpiredException("");
+        }
     }
 
     @CrossOrigin(origins = {"http://localhost:3000"})

@@ -27,6 +27,7 @@ function ChatRoom(props) {
     })
     useEffect(() => {
         if (isWSConnected)
+
             stompClient.subscribe(websocketConfig.roomUrl, (message) => {
                 console.log("message received" + message.body);
             });
@@ -60,10 +61,11 @@ function ChatRoom(props) {
      * Sends the message (json) over stomp;
      *   the header of this message is the token generated when user logged in
      */
-    const sendMessage = function () {
+    const sendMessage = function (event) {
         // pass the jwt as stomp header
         const headers = {
-            token: auth.token
+            token: auth.token,
+            publicKey: auth.publicKey
         }
         stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
             'id': -1,

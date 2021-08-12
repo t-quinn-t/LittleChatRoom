@@ -28,11 +28,25 @@ export function ProvideAuth({children}) {
 
 /* ===== ===== ===== Authentication ===== ===== ===== */
 function useProvideAuth() {
-    const [isLoggedIn, setLoginStatus] = useState(false);
-    const [currUser, setCurrentUser] = useState({
-        uname: null,
-        uid: -1,
-        email: null
+
+    const storage = window.sessionStorage;
+
+    const [isLoggedIn, setLoginStatus] = useState(() => {
+        const serializedUser = getSerializedUser();
+        return serializedUser != null;
+    });
+    const [currUser, setCurrentUser] = useState(() => {
+        // store username/uid in session storage
+        const serializedUser = getSerializedUser();
+        if (serializedUser) {
+            return JSON.parse(serializedUser);
+        } else {
+            return {
+                uname: null,
+                uid: -1,
+                email: null
+            }
+        }
     });
     const [cookies, setCookies, removeCookies] = useCookies(['token', 'publicKey']);
 
@@ -40,8 +54,9 @@ function useProvideAuth() {
         if (user == null) return;
         setLoginStatus(true);
         setCurrentUser({...currUser, email: user.email, uid: user.uid, uname: user.uname});
+        storage.setItem("user", serializeUser(user));
         setCookies('token', token);
-        setCookies('public-key', publicKey);
+        setCookies('publicKey', publicKey);
     }
 
     let handleUserLogout = function (user, token) {
@@ -49,19 +64,36 @@ function useProvideAuth() {
         setLoginStatus(false);
         setCurrentUser({...currUser, uname: null, uid: -1, email: null})
         removeCookies('token');
+        removeCookies('publicKey');
     }
 
     let getToken = function () {
         return cookies.token;
     }
 
-    // Todo: use effect
+    let getPublicKey = function () {
+        return cookies.publicKey;
+    }
 
     return {
         status: isLoggedIn,
         user: currUser,
         token: getToken(),
+        publicKey: getPublicKey(),
         logIn: handleUserLogin,
         logOut: handleUserLogout
     }
+}
+
+function serializeUser(user) {
+    return JSON.stringify({
+        "uname": user.uname,
+        "uid": user.uid,
+        "email": user.email
+    })
+}
+
+function getSerializedUser() {
+    const storage = window.sessionStorage;
+    return storage.getItem("user");
 }

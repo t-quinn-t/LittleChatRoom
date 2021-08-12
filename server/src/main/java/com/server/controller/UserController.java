@@ -62,8 +62,7 @@ public class UserController {
      * @return the entity model of user
      */
     @GetMapping("/login")
-    @CrossOrigin(allowedHeaders = {"token"}, origins = "http://localhost:3000", exposedHeaders = {"token", "public" +
-            "-key"})
+    @CrossOrigin(allowedHeaders = {"token","public-key"}, origins = "http://localhost:3000", exposedHeaders = {"token","public-key"})
     public ResponseEntity<EntityModel<User>> login(@RequestParam(name="identifier") String identifier,
                                 @RequestParam CharSequence password) {
 
@@ -85,8 +84,9 @@ public class UserController {
         JWTAuthService.JWTAuthServiceTokenPackage tokenPackage = jwtService.generateToken(locatedUser);
 
         /* ===== ===== ===== assemble response ===== ===== ===== */
+        logger.warn(Arrays.toString(tokenPackage.getPublicKey()));
         ResponseEntity<EntityModel<User>> response =
-                ResponseEntity.ok().header("token", tokenPackage.getToken()).header("publick-key",
+                ResponseEntity.ok().header("token", tokenPackage.getToken()).header("public-key",
                         Arrays.toString(tokenPackage.getPublicKey())).body(assembler.toModel(locatedUser));
         logger.info("response assembled");
         return response;

@@ -40,11 +40,12 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
     @Override
     public byte[] getPrivateKeyByteData(byte[] targetPublicKeyByteData) {
         if (this.getJdbcTemplate() == null) throw new NullPointerException();
-        String sql = "SELECT private_key FROM public.ec_keypair WHERE public_key = ?";
+        String sql = "SELECT * FROM public.ec_keypairs WHERE public_key = ?";
         byte[] privateKeyByteData = DataAccessUtils.singleResult(this.getJdbcTemplate().query(sql,
                 ((resultSet, i) -> resultSet.getBytes(
-                "private_key")), new Object[] {targetPublicKeyByteData}));
+                        "private_key")), new Object[] {targetPublicKeyByteData}));
         logger.info("Retrieving Private Key from Public Key: \n {}", Arrays.toString(targetPublicKeyByteData));
         return privateKeyByteData;
+
     }
 }
