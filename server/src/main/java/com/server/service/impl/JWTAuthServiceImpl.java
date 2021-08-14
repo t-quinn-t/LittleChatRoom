@@ -11,12 +11,7 @@ import com.server.dao.ECKeyPairDao;
 import com.server.exception.UserTokenExpiredException;
 import com.server.model.User;
 import com.server.service.JWTAuthService;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.ECPointUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +23,9 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -71,16 +69,17 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
             logger.info("Generating new tokens using generated keypair. ");
+
             logger.info("Expected claims: uid=" + user.getUid() + "uname" + user.getName());
             Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             String token = JWT.create()
                     .withIssuer(this.issuer)
-                    .withExpiresAt(new Date(LocalDate.now().plusDays(1L).toEpochDay()))
+                    .withExpiresAt(new Date(LocalDate.now().plusDays(1L).toEpochSecond(LocalTime.now(),
+                            ZoneOffset.UTC) * 1000))
                     .withClaim("uid", user.getUid())
                     .withClaim("uname", user.getName())
                     .withClaim("email", user.getEmail())
                     .sign(algorithm);
-            logger.info("Successfully generated json web token");
             return new JWTAuthServiceTokenPackage(token, publicKey.getEncoded());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot generate public/private keys with ECDSA. No algorithm found.");
