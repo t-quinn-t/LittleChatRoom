@@ -33,7 +33,7 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
             ps.setBytes(2, privateKeyByteData);
             return ps;
         });
-        logger.info("Keypairs successfully registered. PublicKey:\n {}, PrivateKey:\n {}",
+        logger.debug("Keypairs successfully registered. PublicKey:\n {}, PrivateKey:\n {}",
                 Arrays.toString(publicKeyByteData), Arrays.toString(privateKeyByteData));
     }
 
@@ -60,7 +60,7 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
                     logger.warn(Arrays.toString(r));
                     return r;
                 }));
-        logger.info("Retrieving Private Key from Public Key: \n {}", Arrays.toString(targetPublicKeyByteData));
+        logger.debug("Retrieving Private Key from Public Key: \n {}", Arrays.toString(targetPublicKeyByteData));
         return privateKeyByteData;
 
     }

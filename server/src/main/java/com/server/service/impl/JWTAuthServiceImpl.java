@@ -43,8 +43,6 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
     private final String issuer = "littlechatroom";
 
-
-
     @Autowired
     public JWTAuthServiceImpl(ECKeyPairDao keystore) {
         this.keystore = keystore;
@@ -57,6 +55,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
         try {
             /* ===== ===== ===== Generating KeyPairs ===== ===== ===== */
             logger.info("Generating Public/Private key pairs");
+
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA");
             keyPairGenerator.initialize(ecGenParameterSpec);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -69,8 +68,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
             logger.info("Generating new tokens using generated keypair. ");
+            logger.debug("Expected claims: uid=" + user.getUid() + "uname" + user.getName());
 
-            logger.info("Expected claims: uid=" + user.getUid() + "uname" + user.getName());
             Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             String token = JWT.create()
                     .withIssuer(this.issuer)
@@ -99,17 +98,20 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             /* ===== ===== ===== Retrieving Private Key ===== ===== ===== */
             logger.info("Retrieving private key from database");
             byte[] privateKeyByteData = keystore.getPrivateKeyByteData(publicKeyByteData);
+
             /* ===== ===== ===== Restore keypair from byte data ===== ===== ===== */
             logger.info("Retrieving keypair from their byte data");
+
             KeyFactory factory = KeyFactory.getInstance("ECDSA");
             PrivateKey privateKey = factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyByteData));
             PublicKey publicKey = factory.generatePublic(new X509EncodedKeySpec(publicKeyByteData));
 
-            logger.info("Retrieved Publick Key:" + Arrays.toString(publicKey.getEncoded()));
-            logger.info("Retrieved Private Key:" + Arrays.toString(privateKey.getEncoded()));
+            logger.debug("Retrieved Publick Key:" + Arrays.toString(publicKey.getEncoded()));
+            logger.debug("Retrieved Private Key:" + Arrays.toString(privateKey.getEncoded()));
 
             /* ===== ===== ===== Verify token ===== ===== ===== */
             logger.info("Verifying Token ... \n" + "expected claims:\n uid=" + claimingUser.getUid());
+
             Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(this.issuer)
@@ -118,7 +120,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
                     .withClaim("email", claimingUser.getEmail())
                     .build();
             DecodedJWT decodedToken = verifier.verify(token);
-            logger.info("Successfully verified token");
+            logger.debug("Successfully verified token");
             return true;
         } catch (NullPointerException e) {
             logger.error("Cannot retrieve private key with given public key");
