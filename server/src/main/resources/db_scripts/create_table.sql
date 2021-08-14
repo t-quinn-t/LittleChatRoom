@@ -23,7 +23,13 @@ $$
 $$ language plpgsql;
 
 drop trigger if exists update_users on users;
+<<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> 19b30ee... implmented private/public keypair storing facility
+=======
+>>>>>>> 6a99a26f813126506e28b262fee9c1db91fa6c44
 create trigger update_users
 	before update on users
 	for each row 
@@ -45,4 +51,9 @@ create table if not exists user_registration (
 	user_id_fk bigint not null,
 	foreign key(room_id_fk) references chatrooms(room_id),
 	foreign key(user_id_fk) references users(uid)
+);
+
+create table if not exists ec_keypairs (
+	public_key bytea primary key not null,
+	private_key bytea not null
 );

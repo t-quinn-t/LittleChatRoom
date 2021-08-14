@@ -2,23 +2,32 @@ import React, {useState} from 'react';
 import './LogIn.css';
 import {Alert} from "react-bootstrap";
 import {useHistory} from 'react-router-dom';
-
+import {useAuth} from "./auth";
 
 export default function LogInPage(props) {
+
+    // these are states for form, the actual user authentication state is stored
+    //   globally in useAuth hook
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+    const auth = useAuth();
     let history = useHistory();
 
     async function submitForm () {
         let url = "http://localhost:8080/user/login?identifier="+userName+"&password="+password;
+        let token = '';
+        let publicKey = null;
         const response = await fetch(url,{
             method:"GET",
         })
             .then(response => {
                 if (response.ok) {
+                    token = response.headers.get("token");
+                    publicKey = response.headers.get("public-key");
                     return response.json();
                 } else {
+                    // response body is text
                     return response.text();
                 }
             })
@@ -32,7 +41,7 @@ export default function LogInPage(props) {
             })
             .catch(error=>console.log(error));
         if (response != null) {
-            props.userLoginHandler(response);
+            auth.logIn(response, token, publicKey);
             history.push("chatroom");
         }
     }
