@@ -21,6 +21,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,14 +59,14 @@ public class MessageController {
     @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}/")
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message, @Header String token,
-                                            @Header String publicKey) {
-        logger.info("Message Received from chatroom:" + roomId);
+                                            @Header byte[] publicKey) {
+        logger.info("Message Received from chatroom:" + roomId + "/n" + Arrays.toString(publicKey));
         Long userId = message.getSenderId();
         User user = userDao.findByIdentifier(null, null, userId);
         if (user == null)
             throw new UserNotFoundException("unknown");
         logger.info("Verifying Token");
-        if (jwtAuthService.verifyToken(token, publicKey.getBytes(), user)) {
+        if (jwtAuthService.verifyToken(token, publicKey, user)) {
             Message registeredMessage = messageDao.save(message);
             logger.info("Message sending to broker under /topic/"+roomId);
             return messageModelAssembler.toModel(registeredMessage);

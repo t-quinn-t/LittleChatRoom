@@ -11,7 +11,12 @@ import com.server.dao.ECKeyPairDao;
 import com.server.exception.UserTokenExpiredException;
 import com.server.model.User;
 import com.server.service.JWTAuthService;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.ECPointUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +26,7 @@ import org.springframework.stereotype.Component;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
@@ -99,9 +102,11 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             /* ===== ===== ===== Restore keypair from byte data ===== ===== ===== */
             logger.info("Retrieving keypair from their byte data");
             KeyFactory factory = KeyFactory.getInstance("ECDSA");
-            logger.warn(Arrays.toString(privateKeyByteData));
-            PrivateKey privateKey = factory.generatePrivate(new X509EncodedKeySpec(privateKeyByteData));
+            PrivateKey privateKey = factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyByteData));
             PublicKey publicKey = factory.generatePublic(new X509EncodedKeySpec(publicKeyByteData));
+
+            logger.info("Retrieved Publick Key:" + Arrays.toString(publicKey.getEncoded()));
+            logger.info("Retrieved Private Key:" + Arrays.toString(privateKey.getEncoded()));
 
             /* ===== ===== ===== Verify token ===== ===== ===== */
             logger.info("Getting ");

@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author Qintu (Quinn) Tao
@@ -25,7 +27,12 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
     public void registerKeyPair(byte[] publicKeyByteData, byte[] privateKeyByteData) {
         if (this.getJdbcTemplate() == null) throw new NullPointerException();
         String sql = "INSERT INTO public.ec_keypairs (public_key, private_key) VALUES (?, ?)";
-        this.getJdbcTemplate().update(sql, publicKeyByteData, privateKeyByteData);
+        this.getJdbcTemplate().update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setBytes(1, publicKeyByteData);
+            ps.setBytes(2, privateKeyByteData);
+            return ps;
+        });
         logger.info("Keypairs successfully registered. PublicKey:\n {}, PrivateKey:\n {}",
                 Arrays.toString(publicKeyByteData), Arrays.toString(privateKeyByteData));
     }
@@ -41,9 +48,18 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
     public byte[] getPrivateKeyByteData(byte[] targetPublicKeyByteData) {
         if (this.getJdbcTemplate() == null) throw new NullPointerException();
         String sql = "SELECT * FROM public.ec_keypairs WHERE public_key = ?";
-        byte[] privateKeyByteData = DataAccessUtils.singleResult(this.getJdbcTemplate().query(sql,
-                ((resultSet, i) -> resultSet.getBytes(
-                        "private_key")), new Object[] {targetPublicKeyByteData}));
+        byte[] privateKeyByteData = DataAccessUtils.singleResult(this.getJdbcTemplate().query(
+                connection -> {
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setBytes(1, targetPublicKeyByteData);
+                    return ps;
+                },
+                (resultSet, i) -> {
+
+                    byte[] r = resultSet.getBytes("private_key");
+                    logger.warn(Arrays.toString(r));
+                    return r;
+                }));
         logger.info("Retrieving Private Key from Public Key: \n {}", Arrays.toString(targetPublicKeyByteData));
         return privateKeyByteData;
 

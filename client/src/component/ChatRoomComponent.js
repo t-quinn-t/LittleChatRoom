@@ -63,6 +63,7 @@ function ChatRoom(props) {
      */
     const sendMessage = function (event) {
         // pass the jwt as stomp header
+        alert(auth.publicKey)
         const headers = {
             token: auth.token,
             publicKey: auth.publicKey
