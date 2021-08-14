@@ -70,7 +70,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             keystore.registerKeyPair(publicKey.getEncoded(), privateKey.getEncoded());
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
-            logger.info("Generating new tokens using generated keypair");
+            logger.info("Generating new tokens using generated keypair. ");
+            logger.info("Expected claims: uid=" + user.getUid() + "uname" + user.getName());
             Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             String token = JWT.create()
                     .withIssuer(this.issuer)
@@ -109,7 +110,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             logger.info("Retrieved Private Key:" + Arrays.toString(privateKey.getEncoded()));
 
             /* ===== ===== ===== Verify token ===== ===== ===== */
-            logger.info("Getting ");
+            logger.info("Verifying Token ... \n" + "expected claims:\n uid=" + claimingUser.getUid());
             Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(this.issuer)
@@ -138,7 +139,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             /* ===== ===== ===== Throw Exception to client ===== ===== ===== */
             throw new UserTokenExpiredException();
         } catch (JWTVerificationException e) {
-            logger.error("Bad token");
+            logger.error("Bad token \n" + e.getMessage());
         }
         return false;
     }

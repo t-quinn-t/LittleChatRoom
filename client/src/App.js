@@ -41,7 +41,7 @@ function App() {
                       <Route path="/" component={() => <LogInPage/>} exact />
                       {/*Todo: Change the chatroom id to proper chatroom */}
                       <PrivateRoute path="/chatroom">
-                          <ChatRoom roomId={1} uid={1}/>
+                          <ChatRoom roomId={1}/>
                       </PrivateRoute>
                   </Switch>
               </Router>

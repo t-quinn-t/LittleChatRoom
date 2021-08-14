@@ -63,14 +63,14 @@ function ChatRoom(props) {
      */
     const sendMessage = function (event) {
         // pass the jwt as stomp header
-        alert(auth.publicKey)
+        alert(auth.user.uid)
         const headers = {
             token: auth.token,
             publicKey: auth.publicKey
         }
         stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
             'id': -1,
-            'senderId': props.uid,
+            'senderId': auth.user.uid,
             'roomId': props.roomId,
             'content': currentTypingMessage
         }));
