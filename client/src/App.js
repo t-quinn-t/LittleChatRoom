@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LogInPage from './component/auth/LogIn.js'
 import ChatRoom from "./component/ChatRoomComponent";
 import {ProvideAuth, useAuth} from "./component/auth/auth";
+import UserRegistrationForm from "./component/UserRegistrationFormComponent";
 
 /**
  * Redirects to Login if user not logged in;
@@ -43,6 +44,9 @@ function App() {
                       <PrivateRoute path="/chatroom">
                           <ChatRoom roomId={1}/>
                       </PrivateRoute>
+                      <Route path="/register">
+                          <UserRegistrationForm/>
+                      </Route>
                   </Switch>
               </Router>
           </div>
