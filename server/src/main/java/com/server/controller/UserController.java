@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"}, exposedHeaders = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -50,6 +50,7 @@ public class UserController {
     @PostMapping("/register")
     public String registerNewUser(@RequestParam String uname, @RequestParam String email,
                                   @RequestParam CharSequence password) {
+        logger.info("New user registering");
         String saltedPassword = passwordEncoder.encode(password);
         User newUser = new User(uname, email, saltedPassword);
         userDao.save(newUser);
