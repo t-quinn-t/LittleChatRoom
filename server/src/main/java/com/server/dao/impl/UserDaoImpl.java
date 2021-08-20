@@ -49,7 +49,7 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         User user;
         try {
             if (getJdbcTemplate() == null) throw new NullPointerException();
-            if (uid == -1) {
+            if (uid == -1 || idType != null) {
                 String ps = "SELECT * FROM public.users WHERE " + idType + " = ?";
                 user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
                         (resultSet, i) -> {
