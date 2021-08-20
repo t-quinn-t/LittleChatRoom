@@ -48,13 +48,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerNewUser(@RequestParam String uname, @RequestParam String email,
+    public EntityModel<User> registerNewUser(@RequestParam String uname, @RequestParam String email,
                                   @RequestParam CharSequence password) {
         logger.info("New user registering");
         String saltedPassword = passwordEncoder.encode(password);
         User newUser = new User(uname, email, saltedPassword);
         userDao.save(newUser);
-        return "New User Registered";
+        return assembler.toModel(newUser);
     }
 
     /**

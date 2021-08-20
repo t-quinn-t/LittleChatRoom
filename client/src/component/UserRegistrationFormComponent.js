@@ -24,18 +24,18 @@ function UserRegistrationForm (props) {
     ]
 
     let registerUser = async function (event) {
-
+        event.preventDefault();
+        alert("sending fetch")
         let url = "http://localhost:8080/user/register?" +
             "uname=" + unameFromForm + "&" +
             "email=" + emailFromForm + "&" +
             "password=" + passwordFromForm;
-        fetch(url, {
+        await fetch(url, {
             method: 'POST'
         }).then(response => {
-            alert("jh")
+            alert("finish fetch")
             if (response.ok) {
-                handleRegistrationSuccess(response.json());
-
+                handleRegistrationSuccess(response.json(), event.target);
             }
             else
                 handleRegistrationFailure();
@@ -44,8 +44,8 @@ function UserRegistrationForm (props) {
         })
     }
 
-    let handleRegistrationSuccess = function (registeredUser) {
-        alert(registeredUser)
+    let handleRegistrationSuccess = function (registeredUser, form) {
+        form.reset();
         setRegistrationStatus(1);
     }
 
@@ -75,7 +75,8 @@ function UserRegistrationForm (props) {
                             <Button type="submit" variant="primary" style={{"margin-top": "20px", "width": "100%", "height": "50px"}}>Register Now</Button>
                         </Form.Group>
                     </Row>
-                    <Row>
+                    <br/><br/><br/>
+                    <Row style={{"margin-top:": "60px"}}>
                         {registrationMessageList[registrationStatus]}
                     </Row>
                 </Container>
