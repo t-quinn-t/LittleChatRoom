@@ -25,7 +25,6 @@ function UserRegistrationForm (props) {
 
     let registerUser = async function (event) {
         event.preventDefault();
-        alert("sending fetch")
         let url = "http://localhost:8080/user/register?" +
             "uname=" + unameFromForm + "&" +
             "email=" + emailFromForm + "&" +
@@ -33,7 +32,6 @@ function UserRegistrationForm (props) {
         await fetch(url, {
             method: 'POST'
         }).then(response => {
-            alert("finish fetch")
             if (response.ok) {
                 handleRegistrationSuccess(response.json(), event.target);
             }
