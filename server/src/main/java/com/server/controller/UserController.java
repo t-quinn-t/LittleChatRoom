@@ -3,6 +3,7 @@ package com.server.controller;
 import com.server.dao.UserDao;
 import com.server.exception.CredentialFailureException;
 import com.server.exception.PasswordSameException;
+import com.server.exception.UserAlreadyExistsException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"}, exposedHeaders = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -50,10 +51,21 @@ public class UserController {
     @PostMapping("/register")
     public String registerNewUser(@RequestParam String uname, @RequestParam String email,
                                   @RequestParam CharSequence password) {
+        logger.info("New user registering");
         String saltedPassword = passwordEncoder.encode(password);
         User newUser = new User(uname, email, saltedPassword);
+
+        /* ===== ===== ==== Check if user already exists ====== ===== ===== */
+        logger.info("Checking new user sanity");
+        User relatedUser = userDao.findByIdentifier(uname, "uname", -1L);
+        if (relatedUser != null)
+            throw new UserAlreadyExistsException("user name");
+        relatedUser = userDao.findByIdentifier(email, "email", -1L);
+        if (relatedUser != null)
+            throw new UserAlreadyExistsException("email");
         userDao.save(newUser);
-        return "New User Registered";
+        logger.info("New user registered");
+        return "User successfully registered";
     }
 
     /**

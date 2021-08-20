@@ -33,8 +33,6 @@ function ChatRoom(props) {
             });
     }, [isWSConnected]);
 
-    // TODO: token + public key -> payload
-
     /* ===== ===== ===== Chatrooms ===== ===== ===== */
     // TODO: render the correct list of chatrooms
     const [chatRoomList, setChatRoomList] = useState([]);

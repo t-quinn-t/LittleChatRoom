@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './LogIn.css';
 import {Alert} from "react-bootstrap";
-import {useHistory} from 'react-router-dom';
+import {useHistory, Link} from 'react-router-dom';
 import {useAuth} from "./auth";
 
 export default function LogInPage(props) {
@@ -68,6 +68,9 @@ export default function LogInPage(props) {
                 />
                 <br/>
                 <button onClick={submitForm}>Log In</button>
+            </div>
+            <div>
+                <Link to="/register">Register here!</Link>
             </div>
             <div className="error-msg-box">{errorMessage == null ? "": <Alert variant="danger">{errorMessage}</Alert>}</div>
         </div>
