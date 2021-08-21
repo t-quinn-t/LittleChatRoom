@@ -23,13 +23,6 @@ $$
 $$ language plpgsql;
 
 drop trigger if exists update_users on users;
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> 19b30ee... implmented private/public keypair storing facility
-=======
->>>>>>> 6a99a26f813126506e28b262fee9c1db91fa6c44
 create trigger update_users
 	before update on users
 	for each row 
@@ -41,7 +34,7 @@ create table if not exists messages (
 	from_room bigint not null,
 	message_content varchar(256) not null,
 	sent_time timestamp with time zone not null default now(),
-	foreign key(from_user) references usr(uid),
+	foreign key(from_user) references users(uid),
 	foreign key(from_room) references chatrooms(room_id)
 );
 
