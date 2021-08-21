@@ -61,8 +61,8 @@ public class MessageController {
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message, @Header String token,
                                             @Header byte[] publicKey) {
         logger.info("Message Received from chatroom:" + roomId + "/n" + Arrays.toString(publicKey));
-        Long userId = message.getSenderId();
-        User user = userDao.findByIdentifier(null, null, userId);
+        String uname = message.getSender();
+        User user = userDao.findByIdentifier(uname, "uname", -1L);
         if (user == null)
             throw new UserNotFoundException("unknown");
         logger.info("Verifying Token");
