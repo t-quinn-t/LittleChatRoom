@@ -22,11 +22,13 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
 
     public Message save(Message message) {
         if (getJdbcTemplate() == null) throw new NullPointerException();
-        String sqlStr = "INSERT INTO public.messages (from_user, from_room, message_content) VALUES (?,?,?)";
+        String sqlStr = "INSERT INTO public.messages (from_user, from_room, message_content) VALUES (" +
+                "(SELECT uid FROM public.users WHERE uname = ?)" +
+                ",?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.getJdbcTemplate().update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sqlStr);
-            ps.setLong(1, message.getSenderId());
+            ps.setString(1, message.getSender());
             ps.setLong(2, message.getRoomId());
             ps.setString(3, message.getContent());
             return ps;
@@ -46,9 +48,10 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
     public Message getMessageByMessageId(Long messageId) {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         return DataAccessUtils.singleResult(getJdbcTemplate().query(
-                "SELECT * FROM public.messages WHERE from_room = ?",
+                "SELECT uname, from_room, message_content FROM public.users " +
+                        "INNER JOIN public.messages ON uid = from_user WHERE from_room = ?",
                 (resultSet, i) -> new Message(
-                        resultSet.getLong("from_user"),
+                        resultSet.getString("uname"),
                         resultSet.getLong("from_room"),
                         resultSet.getString("message_content")),
                 messageId
@@ -58,9 +61,10 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
     public List<Message> getMessagesByRoomId(Long roomId) {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         return this.getJdbcTemplate().query(
-            "SELECT * FROM public.messages WHERE from_room = ?",
+                "SELECT uname, from_room, message_content FROM public.users " +
+                        "INNER JOIN public.messages ON uid = from_user WHERE from_room = ?",
                 (resultSet, i) -> new Message(
-                        resultSet.getLong("from_user"),
+                        resultSet.getString("uname"),
                         resultSet.getLong("from_room"),
                         resultSet.getString("message_content")),
             roomId

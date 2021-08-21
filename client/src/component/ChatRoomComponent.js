@@ -46,13 +46,27 @@ function ChatRoom(props) {
     let [messageSet, setMessageSet] = useState([]);
     let [currentTypingMessage, setCurrentTypingMessage] = useState("");
     useEffect(() => {
-        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId;
-        fetch(getMessagesReqURL).then(response => response.json()).then(
+        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId + '?uid=' + auth.user.uid;
+        const headers = {
+            token: auth.token,
+            publicKey: auth.publicKey
+        }
+        fetch(getMessagesReqURL, {headers: headers})
+            .then(response => {
+                return response.json();
+            })
+            .then(
             res => {
-                const messages = res._embedded.messages;
-                setMessageSet(messages);
-            }
-        );
+                if (!res._embedded)
+                    setMessageSet([])
+                else {
+                    const messages = res._embedded.messages;
+                    setMessageSet(messages);
+                    }
+                }
+            ).catch(reason => {
+                alert(reason);
+            })
     }, [])
 
     /**
@@ -67,7 +81,7 @@ function ChatRoom(props) {
         }
         stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
             'id': -1,
-            'senderId': auth.user.uid,
+            'sender': auth.user.uname,
             'roomId': props.roomId,
             'content': currentTypingMessage
         }));
@@ -88,7 +102,18 @@ function ChatRoom(props) {
                         <div className="chatroom-scroller">
                             <ul>
                                 {messageSet.map((message) => {
-                                    return <li><div className="chatroom-message-wrapper">{message.content}</div></li>
+                                    return  <li>
+                                                <div className="message-row-wrapper">
+                                                    <div className={message.sender === auth.user.uname ? "message-my-name-box": "message-user-name-box"}>
+                                                        {message.sender}
+                                                    </div>
+                                                    <div className={
+                                                        message.sender === auth.user.uname ? "chatroom-ours-message-box" : "chatroom-others-message-box"
+                                                    }>
+                                                        {message.content}
+                                                    </div>
+                                                </div>
+                                            </li>
                                 })}
                             </ul>
                         </div>

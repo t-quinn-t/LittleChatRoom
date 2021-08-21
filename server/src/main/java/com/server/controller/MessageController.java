@@ -55,14 +55,14 @@ public class MessageController {
      * The Message that sent to broker would have type <EntityModel<Message>>
      *     the Message itself is of type <Message<EntityModel<Message>>>
      */
-    @CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "token")
+    @CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "*")
     @MessageMapping("/send-to/{roomId}/")
     @SendTo("/topic/{roomId}/")
     public EntityModel<Message> sendMessage(@DestinationVariable Long roomId, Message message, @Header String token,
                                             @Header byte[] publicKey) {
         logger.info("Message Received from chatroom:" + roomId + "/n" + Arrays.toString(publicKey));
-        Long userId = message.getSenderId();
-        User user = userDao.findByIdentifier(null, null, userId);
+        String uname = message.getSender();
+        User user = userDao.findByIdentifier(uname, "uname", -1L);
         if (user == null)
             throw new UserNotFoundException("unknown");
         logger.info("Verifying Token");
@@ -76,10 +76,21 @@ public class MessageController {
         }
     }
 
-    @CrossOrigin(origins = {"http://localhost:3000"})
+    @CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "*")
     @GetMapping("/get-messages/{roomId}")
-    public CollectionModel<EntityModel<Message>> getMessagesFromRoom(@PathVariable Long roomId) {
-        logger.info("Get all messages from chatroom:" + roomId);
+    public CollectionModel<EntityModel<Message>> getMessagesFromRoom(@PathVariable Long roomId, @RequestParam Long uid,
+                                                                     @RequestHeader String token,
+     @RequestHeader byte[] publicKey) {
+        logger.info("Client request render all messages of chatroom" + String.valueOf(roomId));
+        logger.info("Locating calling user");
+        User user = userDao.findByIdentifier(null, null, uid);
+        if (user == null)
+            throw new UserNotFoundException("unknown");
+        logger.info("Verifying token");
+        logger.warn(token);
+        logger.debug("Verifying token with public key:" + Arrays.toString(publicKey));
+        if (!jwtAuthService.verifyToken(token, publicKey, user))
+            throw new TokenExpiredException("");
         List<Message> messagesFromRoom = messageDao.getMessagesByRoomId(roomId);
         System.out.println("sending message lists");
         logger.info("Responding with list of messages from chatroom:" + roomId);

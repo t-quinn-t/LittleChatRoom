@@ -96,7 +96,7 @@ public class UserController {
         JWTAuthService.JWTAuthServiceTokenPackage tokenPackage = jwtService.generateToken(locatedUser);
 
         /* ===== ===== ===== assemble response ===== ===== ===== */
-        logger.warn(Arrays.toString(tokenPackage.getPublicKey()));
+        logger.info("Assembly response to user:" + locatedUser.getName());
         ResponseEntity<EntityModel<User>> response =
                 ResponseEntity.ok().header("token", tokenPackage.getToken()).header("public-key",
                         Arrays.toString(tokenPackage.getPublicKey())).body(assembler.toModel(locatedUser));

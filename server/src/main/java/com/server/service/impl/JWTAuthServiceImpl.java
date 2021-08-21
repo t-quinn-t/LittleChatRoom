@@ -120,7 +120,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
                     .withClaim("email", claimingUser.getEmail())
                     .build();
             DecodedJWT decodedToken = verifier.verify(token);
-            logger.debug("Successfully verified token");
+            logger.info("Successfully verified token");
             return true;
         } catch (NullPointerException e) {
             logger.error("Cannot retrieve private key with given public key");
