@@ -46,21 +46,27 @@ function ChatRoom(props) {
     let [messageSet, setMessageSet] = useState([]);
     let [currentTypingMessage, setCurrentTypingMessage] = useState("");
     useEffect(() => {
-        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId;
+        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId + '?uid=' + auth.user.uid;
         const headers = {
-            "token": auth.token,
-            "publicKey": auth.publicKey
+            token: auth.token,
+            publicKey: auth.publicKey
         }
-        fetch(getMessagesReqURL, {headers: headers}).then(response => response.json()).then(
+        fetch(getMessagesReqURL, {headers: headers})
+            .then(response => {
+                return response.json();
+            })
+            .then(
             res => {
                 if (!res._embedded)
                     setMessageSet([])
                 else {
                     const messages = res._embedded.messages;
                     setMessageSet(messages);
+                    }
                 }
-            }
-        );
+            ).catch(reason => {
+                alert(reason);
+            })
     }, [])
 
     /**
@@ -75,7 +81,7 @@ function ChatRoom(props) {
         }
         stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
             'id': -1,
-            'senderId': auth.user.uid,
+            'sender': auth.user.uname,
             'roomId': props.roomId,
             'content': currentTypingMessage
         }));

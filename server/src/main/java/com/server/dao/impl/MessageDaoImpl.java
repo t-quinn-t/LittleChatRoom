@@ -51,7 +51,7 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
                 "SELECT uname, from_room, message_content FROM public.users " +
                         "INNER JOIN public.messages ON uid = from_user WHERE from_room = ?",
                 (resultSet, i) -> new Message(
-                        resultSet.getString("from_user"),
+                        resultSet.getString("uname"),
                         resultSet.getLong("from_room"),
                         resultSet.getString("message_content")),
                 messageId
@@ -64,7 +64,7 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
                 "SELECT uname, from_room, message_content FROM public.users " +
                         "INNER JOIN public.messages ON uid = from_user WHERE from_room = ?",
                 (resultSet, i) -> new Message(
-                        resultSet.getString("from_user"),
+                        resultSet.getString("uname"),
                         resultSet.getLong("from_room"),
                         resultSet.getString("message_content")),
             roomId

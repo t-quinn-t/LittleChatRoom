@@ -53,7 +53,7 @@ function useProvideAuth() {
     let handleUserLogin = function (user, token, publicKey) {
         if (user == null) return;
         setLoginStatus(true);
-        setCurrentUser({...currUser, email: user.email, uid: user.uid, uname: user.uname});
+        setCurrentUser({...currUser, email: user.email, uid: user.uid, uname: user.name});
         storage.setItem("user", serializeUser(user));
         setCookies('token', token);
         setCookies('publicKey', publicKey);
