@@ -47,10 +47,18 @@ function ChatRoom(props) {
     let [currentTypingMessage, setCurrentTypingMessage] = useState("");
     useEffect(() => {
         const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId;
-        fetch(getMessagesReqURL).then(response => response.json()).then(
+        const headers = {
+            "token": auth.token,
+            "publicKey": auth.publicKey
+        }
+        fetch(getMessagesReqURL, {headers: headers}).then(response => response.json()).then(
             res => {
-                const messages = res._embedded.messages;
-                setMessageSet(messages);
+                if (!res._embedded)
+                    setMessageSet([])
+                else {
+                    const messages = res._embedded.messages;
+                    setMessageSet(messages);
+                }
             }
         );
     }, [])

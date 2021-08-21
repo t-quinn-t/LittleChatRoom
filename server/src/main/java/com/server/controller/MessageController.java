@@ -78,8 +78,17 @@ public class MessageController {
 
     @CrossOrigin(origins = {"http://localhost:3000"})
     @GetMapping("/get-messages/{roomId}")
-    public CollectionModel<EntityModel<Message>> getMessagesFromRoom(@PathVariable Long roomId) {
-        logger.info("Get all messages from chatroom:" + roomId);
+    public CollectionModel<EntityModel<Message>> getMessagesFromRoom(@PathVariable Long roomId, @RequestParam Long uid,
+                                                                     @Header String token,
+     @Header byte[] publicKey) {
+        logger.info("Client request render all messages of chatroom" + String.valueOf(roomId));
+        logger.info("Locating calling user");
+        User user = userDao.findByIdentifier(null, null, uid);
+        if (user == null)
+            throw new UserNotFoundException("unknown");
+        logger.info("Verifying token");
+        if (!jwtAuthService.verifyToken(token, publicKey, user))
+            throw new TokenExpiredException("");
         List<Message> messagesFromRoom = messageDao.getMessagesByRoomId(roomId);
         System.out.println("sending message lists");
         logger.info("Responding with list of messages from chatroom:" + roomId);
