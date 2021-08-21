@@ -102,7 +102,18 @@ function ChatRoom(props) {
                         <div className="chatroom-scroller">
                             <ul>
                                 {messageSet.map((message) => {
-                                    return <li><div className="chatroom-message-wrapper">{message.content}</div></li>
+                                    return  <li>
+                                                <div className="message-row-wrapper">
+                                                    <div className={message.sender === auth.user.uname ? "message-my-name-box": "message-user-name-box"}>
+                                                        {message.sender}
+                                                    </div>
+                                                    <div className={
+                                                        message.sender === auth.user.uname ? "chatroom-ours-message-box" : "chatroom-others-message-box"
+                                                    }>
+                                                        {message.content}
+                                                    </div>
+                                                </div>
+                                            </li>
                                 })}
                             </ul>
                         </div>

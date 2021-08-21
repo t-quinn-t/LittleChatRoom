@@ -87,7 +87,7 @@ function useProvideAuth() {
 
 function serializeUser(user) {
     return JSON.stringify({
-        "uname": user.uname,
+        "uname": user.name,
         "uid": user.uid,
         "email": user.email
     })
