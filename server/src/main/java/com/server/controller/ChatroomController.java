@@ -87,10 +87,18 @@ public class ChatroomController {
 
         /* ===== ===== ===== Check room sanity ===== ===== ==== */
         logger.debug("Locating chatroom entity");
+        Chatroom locatedRoom = chatroomDao.findRoomByName(roomName);
+        if (locatedRoom == null)
+            throw new ChatroomNotFoundException(roomName);
 
         /* ===== ===== ===== Verify JWT ===== ===== ===== */
         logger.debug("Verifying token");
         if (!jwtAuthService.verifyToken(token, publicKey, locatedUser))
             throw new TokenExpiredException("unknown");
+
+        /* ===== ===== ===== Join room ===== ===== ===== */
+        logger.debug("Registering user");
+        chatroomDao.registerUserToRoom(locatedUser, locatedRoom);
+        return "Successfully joined room";
     }
 }

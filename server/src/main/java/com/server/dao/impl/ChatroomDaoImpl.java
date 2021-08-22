@@ -2,6 +2,7 @@ package com.server.dao.impl;
 
 import com.server.dao.ChatroomDao;
 import com.server.model.Chatroom;
+import com.server.model.User;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,17 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
         ));
     }
 
+    public Chatroom findRoomByName(String roomName) {
+        if (getJdbcTemplate() == null) throw new NullPointerException();
+        return DataAccessUtils.singleResult(getJdbcTemplate().query(
+                "SELECT * FROM public.chatrooms WHERE room_id = ?",
+                (resultSet, i) -> new Chatroom(
+                        resultSet.getString("room_name")),
+                roomName
+        ));
+    }
+
+
     public List<Chatroom> findRoomsByUid(Long uid) {
         if (getJdbcTemplate() == null)
             throw new NullPointerException();
@@ -62,5 +74,12 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
             room.setName(resultSet.getString(2));
             return room;
         }, uid);
+    }
+
+    public void registerUserToRoom(User user, Chatroom room) {
+        if (getJdbcTemplate() == null)
+            throw new NullPointerException();
+        String sql = "INSERT INTO public.chatroom_user_mapping (user_id_fk, room_id_fk) VALUES(?,?)";
+        getJdbcTemplate().update(sql, user.getUid(), room.getCid());
     }
 }
