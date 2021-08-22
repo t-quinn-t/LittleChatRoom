@@ -3,6 +3,7 @@ package com.server.controller;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.server.dao.ChatroomDao;
 import com.server.dao.UserDao;
+import com.server.exception.ChatRoomAlreadyExistsException;
 import com.server.exception.ChatroomNotFoundException;
 import com.server.exception.UserNotFoundException;
 import com.server.model.Chatroom;
@@ -101,4 +102,23 @@ public class ChatroomController {
         chatroomDao.registerUserToRoom(locatedUser, locatedRoom);
         return "Successfully joined room";
     }
+
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
+    @GetMapping("/create-room")
+    public String createChatroom(@RequestParam String newRoomName, @RequestParam Long uid,
+                                 @RequestHeader String token, @RequestHeader byte[] publicKey) {
+        /* ===== ===== ===== Check user sanity ===== ===== ===== */
+        logger.debug("Locating user entity");
+        User locatedUser = userDao.findByIdentifier(null, null, uid);
+        if (locatedUser == null)
+            throw new UserNotFoundException("unknown");
+
+        /* ===== ===== ===== Check room sanity ===== ===== ==== */
+        logger.debug("Locating chatroom entity");
+        Chatroom locatedRoom = chatroomDao.findRoomByName(newRoomName);
+        if (locatedRoom != null)
+            throw new ChatRoomAlreadyExistsException(newRoomName);
+        return "Successfully created room";
+    }
+
 }
