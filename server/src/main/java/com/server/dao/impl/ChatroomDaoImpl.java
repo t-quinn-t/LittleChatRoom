@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Component
 public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
@@ -48,5 +49,18 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
                         resultSet.getString("room_name")),
                 cid
         ));
+    }
+
+    public List<Chatroom> findRoomsByUid(Long uid) {
+        if (getJdbcTemplate() == null)
+            throw new NullPointerException();
+        String sql = "SELECT room_id, room_name FROM public.chatrooms INNER JOIN public.chatroom_user_mapping ON " +
+                "chatroom_id = room_id_fk WHERE user_id_fk = ?";
+        return getJdbcTemplate().query(sql, (resultSet, i)-> {
+            Chatroom room = new Chatroom();
+            room.setCid(resultSet.getLong(1));
+            room.setName(resultSet.getString(2));
+            return room;
+        }, uid);
     }
 }
