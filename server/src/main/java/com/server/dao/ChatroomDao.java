@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface ChatroomDao {
 
-    void save(Chatroom chatroom);
-    void delete(String cid);
+    Chatroom save(Chatroom chatroom);
+    void delete(Long cid);
     void updateChatroom(Chatroom chatroom);
     Chatroom findRoomByIdentifier(Long cid);
     Chatroom findRoomByName(String roomName);

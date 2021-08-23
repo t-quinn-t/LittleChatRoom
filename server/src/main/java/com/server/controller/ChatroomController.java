@@ -118,6 +118,21 @@ public class ChatroomController {
         Chatroom locatedRoom = chatroomDao.findRoomByName(newRoomName);
         if (locatedRoom != null)
             throw new ChatRoomAlreadyExistsException(newRoomName);
+
+        /* ===== ===== ===== Verify JWT ===== ===== ===== */
+        logger.debug("Verifying token");
+        if (!jwtAuthService.verifyToken(token, publicKey, locatedUser))
+            throw new TokenExpiredException("unknown");
+
+        /* ===== ===== ===== Create room ===== ===== ===== */
+        logger.info("Creating new room");
+        Chatroom newRoom = new Chatroom();
+        newRoom.setName(newRoomName);
+        Chatroom storedRoom = chatroomDao.save(newRoom);
+
+        /* ===== ===== ===== Register first user ===== ===== ===== */
+        logger.info("Registering first user to chatroom: " + storedRoom.getName());
+        chatroomDao.registerUserToRoom(locatedUser, storedRoom);
         return "Successfully created room";
     }
 

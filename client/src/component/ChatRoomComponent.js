@@ -38,7 +38,7 @@ function ChatRoom(props) {
     const [chatRoomList, setChatRoomList] = useState([]);
        /* stub */
     useEffect(() => {
-
+        const url = "http://localhost:8080/"
         setChatRoomList(orig => ["chatroom1", "chatroom2", "adminRoom"]);
     }, []);
 
