@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:8080","https://localhost:3000"})
 @RestController
 @RequestMapping("/chatroom")
 public class ChatroomController {
@@ -51,7 +51,7 @@ public class ChatroomController {
         return chatroomModelAssembler.toModel(currChatroom);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/get-user-rooms")
     public CollectionModel<EntityModel<Chatroom>> getUserRegisteredRooms(@RequestParam Long uid,
                                                                          @RequestHeader String token,
@@ -74,8 +74,8 @@ public class ChatroomController {
         return chatroomModelAssembler.toCollectionModel(userRegisteredRoom);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
-    @GetMapping("/add-user-to-room")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/add-user-to-room")
     public String addUserToRoom(@RequestParam String roomName, @RequestParam Long uid, @RequestHeader String token,
                                 @RequestHeader byte[] publicKey) {
         logger.info("User " + uid + " requests to enter room " + roomName);
@@ -104,7 +104,7 @@ public class ChatroomController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
-    @GetMapping("/create-room")
+    @PostMapping("/create-room")
     public String createChatroom(@RequestParam String newRoomName, @RequestParam Long uid,
                                  @RequestHeader String token, @RequestHeader byte[] publicKey) {
         /* ===== ===== ===== Check user sanity ===== ===== ===== */
