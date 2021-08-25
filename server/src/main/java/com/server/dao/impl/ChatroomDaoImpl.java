@@ -77,7 +77,7 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
         if (getJdbcTemplate() == null)
             throw new NullPointerException();
         String sql = "SELECT room_id, room_name FROM public.chatrooms INNER JOIN public.chatroom_user_mapping ON " +
-                "chatroom_id = room_id_fk WHERE user_id_fk = ?";
+                "room_id = room_id_fk WHERE user_id_fk = ?";
         return getJdbcTemplate().query(sql, (resultSet, i)-> {
             Chatroom room = new Chatroom();
             room.setCid(resultSet.getLong(1));
