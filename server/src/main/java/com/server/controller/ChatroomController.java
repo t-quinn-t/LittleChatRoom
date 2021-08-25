@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8080","https://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:8080","https://localhost:3000"}, exposedHeaders = "*")
 @RestController
 @RequestMapping("/chatroom")
 public class ChatroomController {
@@ -51,7 +51,7 @@ public class ChatroomController {
         return chatroomModelAssembler.toModel(currChatroom);
     }
 
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "*")
     @GetMapping("/get-user-rooms")
     public CollectionModel<EntityModel<Chatroom>> getUserRegisteredRooms(@RequestParam Long uid,
                                                                          @RequestHeader String token,

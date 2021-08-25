@@ -38,7 +38,7 @@ function ChatRoom(props) {
     const [currentRoom, setCurrentRoom] = useState(null);
     const [chatRoomList, setChatRoomList] = useState([]);
     useEffect(() => {
-        const url = "http://localhost:8080/get-user-rooms?uid=" + auth.user.uid;
+        const url = "http://localhost:8080/chatroom/get-user-rooms?uid=" + auth.user.uid;
         fetch(url, {
             headers: {
                 token: auth.token,
@@ -55,7 +55,7 @@ function ChatRoom(props) {
     let [messageSet, setMessageSet] = useState([]);
     let [currentTypingMessage, setCurrentTypingMessage] = useState("");
     useEffect(() => {
-        const getMessagesReqURL = 'http://localhost:8080/chatroom/get-messages/' + props.roomId + '?uid=' + auth.user.uid;
+        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId + '?uid=' + auth.user.uid;
         const headers = {
             token: auth.token,
             publicKey: auth.publicKey
