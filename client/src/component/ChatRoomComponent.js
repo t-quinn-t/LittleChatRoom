@@ -27,7 +27,6 @@ function ChatRoom(props) {
     })
     useEffect(() => {
         if (isWSConnected)
-
             stompClient.subscribe(websocketConfig.roomUrl, (message) => {
                 console.log("message received" + message.body);
             });
@@ -43,19 +42,24 @@ function ChatRoom(props) {
             headers: {
                 token: auth.token,
                 publicKey: auth.publicKey
-            }
-        }).then(response => {
-            if (response.ok) {
-                alert(response.json())
-            }
-        })
+        }})
+            .then(response => response.json())
+            .then(res => {
+                if (res._embedded.chatrooms.length !== 0) {
+                    setChatRoomList(res._embedded.chatrooms);
+                    setCurrentRoom(res._embedded.chatrooms[0]);
+                }
+            })
+            .catch(reason => alert(reason))
+
     }, []);
 
     /* ===== ===== ===== Messaging ===== ===== ===== */
     let [messageSet, setMessageSet] = useState([]);
     let [currentTypingMessage, setCurrentTypingMessage] = useState("");
     useEffect(() => {
-        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + props.roomId + '?uid=' + auth.user.uid;
+        if (currentRoom == null) return;
+        const getMessagesReqURL = 'http://localhost:8080/get-messages/' + currentRoom.cid + '?uid=' + auth.user.uid;
         const headers = {
             token: auth.token,
             publicKey: auth.publicKey
@@ -76,7 +80,7 @@ function ChatRoom(props) {
             ).catch(reason => {
                 alert(reason);
             })
-    }, [])
+    }, currentRoom)
 
     /**
      * Sends the message (json) over stomp;
@@ -91,7 +95,7 @@ function ChatRoom(props) {
         stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
             'id': -1,
             'sender': auth.user.uname,
-            'roomId': props.roomId,
+            'roomId': currentRoom.cid,
             'content': currentTypingMessage
         }));
     }
@@ -103,7 +107,7 @@ function ChatRoom(props) {
                     <Col md={3}>
                         <Nav defaultActiveKey="/home" className="flex-column">
                             {chatRoomList.map(chatroom => {
-                                return <Nav.Link eventKey={chatroom}>{chatroom}</Nav.Link>
+                                return <Nav.Link eventKey={chatroom.cid}>{chatroom.name}</Nav.Link>
                     })}
                         </Nav>
                     </Col>
