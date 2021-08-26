@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Nav, Container, Row, Col, Button, Form} from 'react-bootstrap'
+import {Button, Col, Container, Form, Nav, Row} from 'react-bootstrap'
 import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 import './style/chatRoomStyle.css'
@@ -10,30 +10,23 @@ function ChatRoom(props) {
     const auth = useAuth();
 
     /* ===== ===== ===== Websocket ===== ===== ===== */
-    const websocketConfig = {
-        wsUrl: "http://localhost:8080/websocket",
-        roomUrl: "/topic/" + props.roomId + '/',
-        echoUrl: "/chat/send-to/1/"
-    }
-    const [isWSConnected, setWSConnectionStatus] = useState(false);
+    const wsRootUrl = "http://localhost:8080/websocket";
+
+    // Room subscription route
+    const getTopicUrl = () => "/topic/" + currentRoom.cid + '/';
+
+    // Message pushing route
+    const getPushUrl = () => "/chat/send-to/" + currentRoom.cid;
+
+    /**
+     * Sets up Websocket Connection over stomp; returns a stomp client
+     */
     const [stompClient, setStompClient] = useState(() => {
-        let socket = new SockJS(websocketConfig.wsUrl)
-        let stompClient = Stomp.over(socket)
-        stompClient.connect({}, (frame) => {
-            console.log("connected" + frame);
-            setWSConnectionStatus(true);
-        });
-        return stompClient;
-    })
-    useEffect(() => {
-        if (isWSConnected)
-            stompClient.subscribe(websocketConfig.roomUrl, (message) => {
-                console.log("message received" + message.body);
-            });
-    }, [isWSConnected]);
+        let socket = new SockJS(wsRootUrl);
+        return Stomp.over(socket);
+    });
 
     /* ===== ===== ===== Chatrooms ===== ===== ===== */
-    // TODO: render the correct list of chatrooms
     const [currentRoom, setCurrentRoom] = useState(null);
     const [chatRoomList, setChatRoomList] = useState([]);
     useEffect(() => {
@@ -54,11 +47,25 @@ function ChatRoom(props) {
 
     }, []);
 
-    /* ===== ===== ===== Messaging ===== ===== ===== */
-    let [messageSet, setMessageSet] = useState([]);
-    let [currentTypingMessage, setCurrentTypingMessage] = useState("");
+    /**
+     * When the status of current chatroom changed, triggers corresponding actions:
+     *   1. if current room is null, unsubscribe from stomp client and disconnect ws
+     *   2. if current room changed/initialized, start new subscription to chatroom,
+     *          if ws is not already connected, initialize a new connection
+     */
+    let [currentRoomStompSubscription, setCurrentRoomStompSubscription] = useState(null);
     useEffect(() => {
-        if (currentRoom == null) return;
+        if (currentRoom == null) {
+            // unsubscribe and disconnect
+            if (currentRoomStompSubscription != null) {
+                currentRoomStompSubscription.unsubscribe();
+                stompClient.disconnect();
+            }
+
+            return;
+        };
+
+        // Load messages from destination chatroom
         const getMessagesReqURL = 'http://localhost:8080/get-messages/' + currentRoom.cid + '?uid=' + auth.user.uid;
         const headers = {
             token: auth.token,
@@ -80,8 +87,28 @@ function ChatRoom(props) {
             ).catch(reason => {
                 alert(reason);
             })
-    }, currentRoom)
 
+        // Subscribe to the room
+        stompClient.connect();
+        if (currentRoomStompSubscription != null) currentRoomStompSubscription.unsubscribe();
+        setCurrentRoomStompSubscription(stompClient.subscribe(getTopicUrl(), (message) => {
+            console.log("message received" + message.body);
+        }));
+
+        return () => {
+            if (currentRoomStompSubscription != null) currentRoomStompSubscription.unsubscribe();
+            setCurrentRoomStompSubscription(null);
+            stompClient.disconnect();
+        }
+    }, currentRoom);
+
+    const switchChatroom = function (eventKey) {
+
+    }
+
+    /* ===== ===== ===== Messaging ===== ===== ===== */
+    let [messageSet, setMessageSet] = useState([]);
+    let [currentTypingMessage, setCurrentTypingMessage] = useState("");
     /**
      * Sends the message (json) over stomp;
      *   the header of this message is the token generated when user logged in
@@ -92,7 +119,7 @@ function ChatRoom(props) {
             token: auth.token,
             publicKey: auth.publicKey
         }
-        stompClient.send(websocketConfig.echoUrl, headers, JSON.stringify({
+        stompClient.send(getPushUrl(), headers, JSON.stringify({
             'id': -1,
             'sender': auth.user.uname,
             'roomId': currentRoom.cid,
@@ -105,7 +132,7 @@ function ChatRoom(props) {
             <Container fluid>
                 <Row>
                     <Col md={3}>
-                        <Nav defaultActiveKey="/home" className="flex-column">
+                        <Nav defaultActiveKey="/home" className="flex-column" onSelect={switchChatroom}>
                             {chatRoomList.map(chatroom => {
                                 return <Nav.Link eventKey={chatroom.cid}>{chatroom.name}</Nav.Link>
                     })}
