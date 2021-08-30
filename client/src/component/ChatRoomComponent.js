@@ -16,15 +16,19 @@ function ChatRoom(props) {
     const getTopicUrl = () => "/topic/" + currentRoom.cid + '/';
 
     // Message pushing route
-    const getPushUrl = () => "/chat/send-to/" + currentRoom.cid;
+    const getPushUrl = () => "/chat/send-to/" + currentRoom.cid + '/';
 
     /**
      * Sets up Websocket Connection over stomp; returns a stomp client
      */
+    const [isClientConnected, updateClientConnectionStatusTo] = useState(false);
     const [stompClient, setStompClient] = useState(() => {
         let socket = new SockJS(wsRootUrl);
-        return Stomp.over(socket);
-    });
+        const tempClient = Stomp.over(socket);
+        tempClient.connect({}, (frame)=>updateClientConnectionStatusTo(true));
+        return tempClient;
+    })
+
 
     /* ===== ===== ===== Chatrooms ===== ===== ===== */
     const [currentRoom, setCurrentRoom] = useState(null);
@@ -55,15 +59,7 @@ function ChatRoom(props) {
      */
     let [currentRoomStompSubscription, setCurrentRoomStompSubscription] = useState(null);
     useEffect(() => {
-        if (currentRoom == null) {
-            // unsubscribe and disconnect
-            if (currentRoomStompSubscription != null) {
-                currentRoomStompSubscription.unsubscribe();
-                stompClient.disconnect();
-            }
-
-            return;
-        };
+        if (currentRoom == null) return;
 
         // Load messages from destination chatroom
         const getMessagesReqURL = 'http://localhost:8080/get-messages/' + currentRoom.cid + '?uid=' + auth.user.uid;
@@ -88,17 +84,12 @@ function ChatRoom(props) {
                 alert(reason);
             })
 
-        // Subscribe to the room
-        stompClient.connect();
-        if (currentRoomStompSubscription != null) currentRoomStompSubscription.unsubscribe();
-        setCurrentRoomStompSubscription(stompClient.subscribe(getTopicUrl(), (message) => {
-            console.log("message received" + message.body);
-        }));
+        if (stompClient.connected)
+            stompClient.subscribe(getTopicUrl(), (message) => {}, {});
 
         return () => {
             if (currentRoomStompSubscription != null) currentRoomStompSubscription.unsubscribe();
             setCurrentRoomStompSubscription(null);
-            stompClient.disconnect();
         }
     }, [currentRoom]);
 
