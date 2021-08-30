@@ -159,12 +159,12 @@ function ChatRoom(props) {
                         </div>
                         <Form onSubmit={sendMessage}>
                             <Row>
-                                <Form.Group as={Col} md="1" controlId="send-button">
-                                    <Button variant="primary" type="submit">
+                                <Form.Group as={Col} md="2" controlId="send-button" className="send-message-btn-container">
+                                    <Button variant="primary" type="submit" id="send-message-btn">
                                         Send
                                     </Button>
                                 </Form.Group>
-                                <Form.Group as={Col} md="10" controlId="get-message-body">
+                                <Form.Group as={Col} md="10" controlId="get-message-body" className="message-text-input-container">
                                     <Form.Control type="text" placeholder="type something" className="message-text-input"
                                     onChange={(event) => {
                                         setCurrentTypingMessage(event.target.value);
