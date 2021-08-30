@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Button, Col, Container, Form, Nav, Row} from 'react-bootstrap'
+import {Button, ListGroup, Col, Container, Form, Nav, Row, ListGroupItem} from 'react-bootstrap'
 import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 import './style/chatRoomStyle.css'
@@ -100,11 +100,7 @@ function ChatRoom(props) {
             setCurrentRoomStompSubscription(null);
             stompClient.disconnect();
         }
-    }, currentRoom);
-
-    const switchChatroom = function (eventKey) {
-
-    }
+    }, [currentRoom]);
 
     /* ===== ===== ===== Messaging ===== ===== ===== */
     let [messageSet, setMessageSet] = useState([]);
@@ -131,12 +127,16 @@ function ChatRoom(props) {
         <div className="chatroom-container">
             <Container fluid>
                 <Row>
-                    <Col md={3}>
-                        <Nav defaultActiveKey="/home" className="flex-column" onSelect={switchChatroom}>
+                    <Col md={3} id="chatroom-list-container">
+                        <ListGroup vertical size="lg" variant="flush">
                             {chatRoomList.map(chatroom => {
-                                return <Nav.Link eventKey={chatroom.cid}>{chatroom.name}</Nav.Link>
-                    })}
-                        </Nav>
+                                return (
+                                    <ListGroupItem variant="light" action onClick={(e) => {
+                                        setCurrentRoom(chatroom);
+                                    }}>{chatroom.name}</ListGroupItem>
+                                )
+                            })}
+                        </ListGroup>
                     </Col>
                     <Col md={9}>
                         <div className="chatroom-scroller">
