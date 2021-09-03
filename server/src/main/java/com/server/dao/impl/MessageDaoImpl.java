@@ -62,7 +62,7 @@ public class MessageDaoImpl extends JdbcDaoSupport implements MessageDao {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         return this.getJdbcTemplate().query(
                 "SELECT uname, from_room, message_content FROM public.users " +
-                        "INNER JOIN public.messages ON uid = from_user WHERE from_room = ?",
+                        "INNER JOIN public.messages ON uid = from_user WHERE from_room = ? ORDER BY messages.sent_time",
                 (resultSet, i) -> new Message(
                         resultSet.getString("uname"),
                         resultSet.getLong("from_room"),
