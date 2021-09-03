@@ -85,7 +85,11 @@ function ChatRoom(props) {
             })
 
         if (stompClient.connected)
-            stompClient.subscribe(getTopicUrl(), (message) => {}, {});
+            stompClient.subscribe(getTopicUrl(), (message) => {
+                setMessageSet((prevState => {
+                    return [...prevState, JSON.parse(message.body)]
+                }))
+            }, {});
 
         return () => {
             if (currentRoomStompSubscription != null) currentRoomStompSubscription.unsubscribe();
@@ -119,10 +123,10 @@ function ChatRoom(props) {
             <Container fluid>
                 <Row>
                     <Col md={3} id="chatroom-list-container">
-                        <ListGroup vertical size="lg" variant="flush">
-                            {chatRoomList.map(chatroom => {
+                        <ListGroup size="lg" variant="flush">
+                            {chatRoomList.map((chatroom, index )=> {
                                 return (
-                                    <ListGroupItem variant="light" action onClick={(e) => {
+                                    <ListGroupItem key={"room-"+index} variant="light" action onClick={(e) => {
                                         setCurrentRoom(chatroom);
                                     }}>{chatroom.name}</ListGroupItem>
                                 )
@@ -132,8 +136,8 @@ function ChatRoom(props) {
                     <Col md={9}>
                         <div className="chatroom-scroller">
                             <ul>
-                                {messageSet.map((message) => {
-                                    return  <li>
+                                {messageSet.map((message, index) => {
+                                    return  <li key={index}>
                                                 <div className="message-row-wrapper">
                                                     <div className={message.sender === auth.user.uname ? "message-my-name-box": "message-user-name-box"}>
                                                         {message.sender}
