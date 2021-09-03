@@ -38,7 +38,7 @@ create table if not exists messages (
 	foreign key(from_room) references chatrooms(room_id)
 );
 
-create table if not exists user_registration (
+create table if not exists chatroom_user_mapping (
 	registration_id serial primary key not null,
 	room_id_fk bigint not null,
 	user_id_fk bigint not null,
