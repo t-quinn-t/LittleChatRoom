@@ -52,7 +52,7 @@ export default function LogInPage(props) {
 
     return (
         <div className="login-component-box">
-            <div id="website-name-box">
+            <div className="website-name-box">
                 <h1>LittleChatRoom</h1>
             </div>
             <Form onSubmit={submitForm}>
@@ -73,7 +73,7 @@ export default function LogInPage(props) {
                         Password
                     </Form.Label>
                     <Form.Control
-                        type="text"
+                        type="password"
                         placeholder="Please enter your password"
                         value={password}
                         onChange={(password)=>setPassword(password.target.value)}

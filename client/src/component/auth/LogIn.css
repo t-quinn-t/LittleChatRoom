@@ -3,12 +3,17 @@
     margin: 20% auto auto;
     max-width: 524px;
 }
+.user-registration-form-box {
+    box-sizing: border-box;
+    margin: 20% auto auto;
+    max-width: 524px;
+}
 
-#website-name-box h1 {
+.website-name-box h1 {
     font-weight: bolder;
     font-size: 48px;
 }
-#website-name-box {
+.website-name-box {
     margin: auto;
     padding: 80px;
     text-align: center;
@@ -29,4 +34,17 @@
     margin: auto;
     margin-top: 20px;
     text-align: center;
+}
+
+.error-msg-box {
+    margin-top: 20px;
+}
+
+#register-btn-box {
+    text-align: center;
+}
+
+#register-btn-box button{
+    background-color: #6610f2;
+    border-color: #6610f2;
 }
