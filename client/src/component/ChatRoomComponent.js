@@ -133,7 +133,7 @@ function ChatRoom(props) {
                             })}
                         </ListGroup>
                     </Col>
-                    <Col md={9}>
+                    <Col md={9} id="chatroom-col">
                         <div className="chatroom-scroller">
                             <ul>
                                 {messageSet.map((message, index) => {
@@ -152,21 +152,23 @@ function ChatRoom(props) {
                                 })}
                             </ul>
                         </div>
-                        <Form onSubmit={sendMessage}>
-                            <Row>
-                                <Form.Group as={Col} md="2" controlId="send-button" className="send-message-btn-container">
-                                    <Button variant="primary" type="submit" id="send-message-btn">
-                                        Send
-                                    </Button>
-                                </Form.Group>
-                                <Form.Group as={Col} md="10" controlId="get-message-body" className="message-text-input-container">
-                                    <Form.Control type="text" placeholder="type something" className="message-text-input"
-                                    onChange={(event) => {
-                                        setCurrentTypingMessage(event.target.value);
-                                    }}/>
-                                </Form.Group>
-                            </Row>
-                        </Form>
+                        <div id="send-form-box">
+                            <Form onSubmit={sendMessage}>
+                                <Row>
+                                    <Form.Group as={Col} md="2" controlId="send-button" className="send-message-btn-container">
+                                        <Button variant="primary" type="submit" id="send-message-btn">
+                                            Send
+                                        </Button>
+                                    </Form.Group>
+                                    <Form.Group as={Col} md="10" controlId="get-message-body" className="message-text-input-container">
+                                        <Form.Control type="text" placeholder="type something" className="message-text-input"
+                                        onChange={(event) => {
+                                            setCurrentTypingMessage(event.target.value);
+                                        }}/>
+                                    </Form.Group>
+                                </Row>
+                            </Form>
+                        </div>
 
                     </Col>
                 </Row>
