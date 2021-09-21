@@ -52,6 +52,9 @@ export default function LogInPage(props) {
 
     return (
         <div className="login-component-box">
+            <div id="website-name-box">
+                <h1>LittleChatRoom</h1>
+            </div>
             <Form onSubmit={submitForm}>
                 <Form.Group controlId="username-field">
                     <Form.Label>
@@ -64,6 +67,7 @@ export default function LogInPage(props) {
                         onChange={(username)=>setUserName(username.target.value)}
                     />
                 </Form.Group>
+                <br/>
                 <Form.Group controlId="password-field">
                     <Form.Label>
                         Password
@@ -76,13 +80,13 @@ export default function LogInPage(props) {
                     />
                 </Form.Group>
                 <br/><br/>
-                <Form.Group controlId="submit-btn">
-                    <Button variant="primary" type="submit">Login</Button>
+                <Form.Group controlId="submit-btn" id="login-btn-box">
+                    <Button variant="primary" type="submit" id="login-btn">Login</Button>
                 </Form.Group>
 
             </Form>
-            <div>
-                <Link to="/register">Register here!</Link>
+            <div id="registration-btn-box">
+                <Link to="/register" id="registration-btn">Register here!</Link>
             </div>
             <div className="error-msg-box">{errorMessage == null ? "": <Alert variant="danger">{errorMessage}</Alert>}</div>
         </div>
