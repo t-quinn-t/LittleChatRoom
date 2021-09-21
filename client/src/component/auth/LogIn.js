@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './LogIn.css';
-import {Alert} from "react-bootstrap";
+import {Alert, Form, Button} from "react-bootstrap";
 import {useHistory, Link} from 'react-router-dom';
 import {useAuth} from "./auth";
 
@@ -14,11 +14,12 @@ export default function LogInPage(props) {
     const auth = useAuth();
     let history = useHistory();
 
-    async function submitForm () {
+    function submitForm (event) {
+        event.preventDefault();
         let url = "http://localhost:8080/user/login?identifier="+userName+"&password="+password;
         let token = '';
         let publicKey = null;
-        const response = await fetch(url,{
+        fetch(url,{
             method:"GET",
         })
             .then(response => {
@@ -39,36 +40,47 @@ export default function LogInPage(props) {
                 setErrorMessage(null);
                 return response;
             })
-            .catch(error=>console.log(error));
-        if (response != null) {
-            auth.logIn(response, token, publicKey);
-            history.push("chatroom");
-        }
+            .then(response => {
+                if (response != null) {
+                    auth.logIn(response, token, publicKey);
+                    history.push("chatroom");
+                }
+            })
+            .catch(error=>console.log(error))
+
     }
 
     return (
         <div className="login-component-box">
-            <div>
-                <label>
-                    Username
-                    <input
+            <Form onSubmit={submitForm}>
+                <Form.Group controlId="username-field">
+                    <Form.Label>
+                        Username/Email
+                    </Form.Label>
+                    <Form.Control
                         type="text"
                         placeholder="Please enter your username/email"
                         value={userName}
                         onChange={(username)=>setUserName(username.target.value)}
                     />
-                </label>
-                <br/>
-                <label>Password</label>
-                <input
-                    type="text"
-                    placeholder="Please enter your password"
-                    value={password}
-                    onChange={(password)=>setPassword(password.target.value)}
-                />
-                <br/>
-                <button onClick={submitForm}>Log In</button>
-            </div>
+                </Form.Group>
+                <Form.Group controlId="password-field">
+                    <Form.Label>
+                        Password
+                    </Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Please enter your password"
+                        value={password}
+                        onChange={(password)=>setPassword(password.target.value)}
+                    />
+                </Form.Group>
+                <br/><br/>
+                <Form.Group controlId="submit-btn">
+                    <Button variant="primary" type="submit">Login</Button>
+                </Form.Group>
+
+            </Form>
             <div>
                 <Link to="/register">Register here!</Link>
             </div>

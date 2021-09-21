@@ -1,21 +1,6 @@
-label {
-    margin-left: 22px;
-    margin-bottom: 10px;
-}
-
-input {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 250px;
-    height: 30px;
-    margin-bottom: 20px;
-}
-
-button {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100px;
-    height: 40px;
+.login-component-box {
+    box-sizing: border-box;
+    margin: auto;
+    margin-top: 20%;
+    max-width: 524px;
 }
