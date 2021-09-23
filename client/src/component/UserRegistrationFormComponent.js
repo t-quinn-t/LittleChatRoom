@@ -55,25 +55,28 @@ function UserRegistrationForm (props) {
     return (
         <div className="form-container">
             <Form onSubmit={registerUser} id="registration-form">
-                <div style={{"margin": "auto", "text-align": "center", "margin-bottom": "30px"}}>
-                    <h1>Little Chat Room</h1>
-                </div>
-                <Container fluid>
+                <Container fluid className="user-registration-form-box">
+                    <div className="website-name-box">
+                        <h1>LittleChatRoom</h1>
+                    </div>
                     <Form.FloatingLabel controlId="name-input" label="Your name">
                         <Form.Control type="text" placeholder="Mr Unknown" onChange={(event) => {setUnameFromForm(event.target.value)}}/>
                     </Form.FloatingLabel>
+                    <br/>
                     <Form.FloatingLabel controlId="floatingInput" label="Email address">
                         <Form.Control type="email" placeholder="name@example.com" onChange={(event) => {setEmailFromForm(event.target.value)}}/>
                     </Form.FloatingLabel>
+                    <br/>
                     <Form.FloatingLabel controlId="floatingPassword" label="Password">
                         <Form.Control type="password" placeholder="Password" onChange={(event) => {setPasswordFromForm(event.target.value)}}/>
                     </Form.FloatingLabel>
+                    <br/><br/>
                     <Row>
-                        <Form.Group controlId="submit-button" as={Col} xxl={{span:2, offset:5}}>
-                            <Button type="submit" variant="primary" style={{"margin-top": "20px", "width": "100%", "height": "50px"}}>Register Now</Button>
+                        <Form.Group controlId="submit-button" id="register-btn-box" as={Col} xxl={{span:2, offset:5}}>
+                            <Button type="submit" variant="primary">Register Now</Button>
                         </Form.Group>
                     </Row>
-                    <br/><br/><br/>
+                    <br/><br/>
                     <Row style={{"margin-top:": "60px"}}>
                         {registrationMessageList[registrationStatus]}
                     </Row>

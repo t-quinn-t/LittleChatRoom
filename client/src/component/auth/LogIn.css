@@ -1,21 +1,50 @@
-label {
-    margin-left: 22px;
-    margin-bottom: 10px;
+.login-component-box {
+    box-sizing: border-box;
+    margin: 20% auto auto;
+    max-width: 524px;
+}
+.user-registration-form-box {
+    box-sizing: border-box;
+    margin: 20% auto auto;
+    max-width: 524px;
 }
 
-input {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 250px;
-    height: 30px;
-    margin-bottom: 20px;
+.website-name-box h1 {
+    font-weight: bolder;
+    font-size: 48px;
+}
+.website-name-box {
+    margin: auto;
+    padding: 80px;
+    text-align: center;
 }
 
-button {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100px;
-    height: 40px;
+#login-btn {
+    background-color: #6610f2;
+}
+#login-btn-box {
+    margin: auto;
+    text-align: center;
+}
+
+#registration-btn {
+    color: #6610f2;
+}
+#registration-btn-box {
+    margin: auto;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.error-msg-box {
+    margin-top: 20px;
+}
+
+#register-btn-box {
+    text-align: center;
+}
+
+#register-btn-box button{
+    background-color: #6610f2;
+    border-color: #6610f2;
 }
