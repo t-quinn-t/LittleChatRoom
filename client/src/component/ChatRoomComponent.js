@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 import './style/chatRoomStyle.css'
 import {useAuth} from "./auth/auth";
+import UserProfileCardView from "./UserProfileCardViewComponent";
 
 function ChatRoom(props) {
 
@@ -123,6 +124,7 @@ function ChatRoom(props) {
             <Container fluid>
                 <Row>
                     <Col md={3} id="chatroom-list-container">
+                        <UserProfileCardView/>
                         <ListGroup size="lg" variant="flush">
                             {chatRoomList.map((chatroom, index )=> {
                                 return (
