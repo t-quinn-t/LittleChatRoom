@@ -1,0 +1,13 @@
+.user-profile-card-view-container {
+    position: relative;
+    background-color: slateblue;
+    color: white;
+    padding: 20px;
+    height: 200px;
+}
+.user-settings-btn-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
