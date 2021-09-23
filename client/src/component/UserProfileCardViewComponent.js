@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {useAuth} from "./auth/auth";
+import "./style/userProfileCardViewStyle.css"
 /* <a href="https://icons8.com/icon/UXWIv5G5mWsK/settings">Settings icon by Icons8</a> */
 
 function UserProfileCardView(props) {
@@ -26,7 +27,7 @@ function UserProfileCardView(props) {
             </div>
             <div className="user-settings-btn-container">
                 <Link to="settings">
-                    <img src="https://img.icons8.com/windows/32/000000/settings--v2.png"/>
+                    <img src="https://img.icons8.com/ios-filled/36/ffffff/settings.png"/>
                 </Link>
             </div>
         </div>
