@@ -5,11 +5,14 @@
  */
 
 import React, {useState} from "react";
-import {Button} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 
 function CreateOrJoinRoomPage(props) {
     /* ===== ===== ===== States & Hooks ===== ===== ===== */
-    const [formPromptFlag, setFormPromptFlag] = useState(0); // 0 - not shown, 1 - create room form, 2 - join room form
+    const [formPromptFlag, setFormPromptFlag] = useState(-1); // -1 - not shown, 0 - create room form, 1 - join room
+    const [userEnteredRoomName, setUserEnteredUserName] = useState();
+
+    // form
 
     /* ===== ===== ===== Inner Component ===== ===== ===== */
     function CJButton(props) {
@@ -21,15 +24,29 @@ function CreateOrJoinRoomPage(props) {
             </div>
         )
     }
+
+    function CJForm(props) {
+        const placeholderFlagNameMapping = [
+            "Name of the new room",
+            "Name of the room to join"
+        ]
+        return (
+            <Form>
+                <Form.FloatingLabel controlId="room-name-input" label={placeholderFlagNameMapping[props.flag]}>
+                    <Form.Control type="text" placeholder={placeholderFlagNameMapping[props.flag]} onChange={(event) => {props.handleInput(event.target.value)}}/>
+                </Form.FloatingLabel>
+            </Form>
+        )
+    }
     /* ===== ===== ===== Render ===== ===== ===== */
     return (
         <div className="cjroom-container">
-            <CJButton flag={1} buttonText="Create a chatroom"/>
+            <CJButton flag={0} buttonText="Create a chatroom"/>
             <div>
                 <p>OR</p>
             </div>
-            <CJButton flag={2} buttonText="Join a chatroom"/>
-            <p>{formPromptFlag}</p>
+            <CJButton flag={1} buttonText="Join a chatroom"/>
+            {formPromptFlag === -1 ? null : <CJForm flag={formPromptFlag} handleInput={event => setUserEnteredUserName(event.target.value)}/>}
         </div>
     )
 }
