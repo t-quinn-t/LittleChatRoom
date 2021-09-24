@@ -136,7 +136,7 @@ function ChatRoom(props) {
                             })}
                         </ListGroup>
                         <Link to="/create-or-join-room" id="chatroom-plus-btn-box">
-                            <button className="chatroom-plus-btn"></button>
+                            <button className="chatroom-plus-btn"/>
                         </Link>
                     </Col>
                     <Col md={9} id="chatroom-col">
