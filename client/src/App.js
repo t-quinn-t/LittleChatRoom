@@ -44,6 +44,9 @@ function App() {
                       <PrivateRoute path="/chatroom">
                           <ChatRoom roomId={1}/>
                       </PrivateRoute>
+                      <PrivateRoute path="/create-or-join-room">
+                          <div>hello world</div>
+                      </PrivateRoute>
                       <Route path="/register">
                           <UserRegistrationForm/>
                       </Route>

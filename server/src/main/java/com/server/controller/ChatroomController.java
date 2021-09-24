@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8080","https://localhost:3000"}, exposedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:8080","https://localhost:3000"}, exposedHeaders = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/chatroom")
 public class ChatroomController {
-
     private final ChatroomDao chatroomDao;
     private final ChatroomModelAssembler chatroomModelAssembler;
     private final UserDao userDao;

@@ -5,6 +5,7 @@ import Stomp from 'stompjs'
 import './style/chatRoomStyle.css'
 import {useAuth} from "./auth/auth";
 import UserProfileCardView from "./UserProfileCardViewComponent";
+import {Link} from "react-router-dom";
 
 function ChatRoom(props) {
 
@@ -134,6 +135,9 @@ function ChatRoom(props) {
                                 )
                             })}
                         </ListGroup>
+                        <Link to="/create-or-join-room" id="chatroom-plus-btn-box">
+                            <button className="chatroom-plus-btn"></button>
+                        </Link>
                     </Col>
                     <Col md={9} id="chatroom-col">
                         <div className="chatroom-scroller">
