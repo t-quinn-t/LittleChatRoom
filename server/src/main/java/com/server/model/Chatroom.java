@@ -12,6 +12,8 @@ public class Chatroom {
         this.cname = name;
     }
 
+    public Chatroom(long cid, String name) {this.cid = cid; this.cname = name;}
+
     public String getName() {
         return cname;
     }
