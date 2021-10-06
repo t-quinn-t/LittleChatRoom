@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -29,7 +30,7 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
         String sql = "INSERT INTO public.chatrooms (room_name) VALUES (?) RETURNING room_id;";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         getJdbcTemplate().update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,chatroom.getName());
             return ps;
         }, keyHolder);
