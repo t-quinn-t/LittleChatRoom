@@ -89,6 +89,7 @@ function ChatRoom(props) {
         if (stompClient.connected)
             stompClient.subscribe(getTopicUrl(), (message) => {
                 setMessageSet((prevState => {
+                    alert(message)
                     return [...prevState, JSON.parse(message.body)]
                 }))
             }, {});
@@ -107,6 +108,7 @@ function ChatRoom(props) {
      *   the header of this message is the token generated when user logged in
      */
     const sendMessage = function (event) {
+        event.preventDefault();
         // pass the jwt as stomp header
         const headers = {
             token: auth.token,
@@ -118,6 +120,7 @@ function ChatRoom(props) {
             'roomId': currentRoom.cid,
             'content': currentTypingMessage
         }));
+        setCurrentTypingMessage("");
     }
 
     return (
@@ -167,7 +170,7 @@ function ChatRoom(props) {
                                         </Button>
                                     </Form.Group>
                                     <Form.Group as={Col} md="10" controlId="get-message-body" className="message-text-input-container">
-                                        <Form.Control type="text" placeholder="type something" className="message-text-input"
+                                        <Form.Control type="text" placeholder="type something" className="message-text-input" value={currentTypingMessage}
                                         onChange={(event) => {
                                             setCurrentTypingMessage(event.target.value);
                                         }}/>
