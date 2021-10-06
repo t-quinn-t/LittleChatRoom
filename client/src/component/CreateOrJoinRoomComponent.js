@@ -1,19 +1,18 @@
 /**
  * @author Quinn Tao
  * Date Created: Sep 23, 2021
- * Last Updated: Sep 23, 2021
+ * Last Updated: Oct 5, 2021
  */
 
 import React, {useState} from "react";
 import {Button, Form} from "react-bootstrap";
 import {useAuth} from "./auth/auth";
 import {useHistory} from 'react-router-dom';
+import './style/createOrJoinRoomPage.css';
 
 function CreateOrJoinRoomPage(props) {
     /* ===== ===== ===== States & Hooks ===== ===== ===== */
     const [userOptionFlag, setUserOptionFlag] = useState(-1); // -1 - not shown, 0 - create room form, 1 - join room
-
-
 
     /* ===== ===== ===== Inner Component ===== ===== ===== */
     function CJButton(props) {
@@ -91,7 +90,9 @@ function CreateOrJoinRoomPage(props) {
                 event.preventDefault();
                 if (props.flag == 0) registerNewRoom();
                 else joinExistingRoom();
-            }}>
+            }}
+                  className="cjroom-form"
+            >
                 <Form.FloatingLabel controlId="room-name-input" label={placeholderFlagNameMapping[props.flag]}>
                     <Form.Control type="text" placeholder={placeholderFlagNameMapping[props.flag]} onChange={(event) => {setUserEnteredUserName(event.target.value)}}/>
                 </Form.FloatingLabel>
