@@ -5,6 +5,7 @@ import Stomp from 'stompjs'
 import './style/chatRoomStyle.css'
 import {useAuth} from "./auth/auth";
 import UserProfileCardView from "./UserProfileCardViewComponent";
+import {Link} from "react-router-dom";
 
 function ChatRoom(props) {
 
@@ -106,6 +107,7 @@ function ChatRoom(props) {
      *   the header of this message is the token generated when user logged in
      */
     const sendMessage = function (event) {
+        event.preventDefault();
         // pass the jwt as stomp header
         const headers = {
             token: auth.token,
@@ -117,6 +119,7 @@ function ChatRoom(props) {
             'roomId': currentRoom.cid,
             'content': currentTypingMessage
         }));
+        setCurrentTypingMessage("");
     }
 
     return (
@@ -134,6 +137,9 @@ function ChatRoom(props) {
                                 )
                             })}
                         </ListGroup>
+                        <Link to="/create-or-join-room" id="chatroom-plus-btn-box">
+                            <button className="chatroom-plus-btn"/>
+                        </Link>
                     </Col>
                     <Col md={9} id="chatroom-col">
                         <div className="chatroom-scroller">
@@ -163,7 +169,7 @@ function ChatRoom(props) {
                                         </Button>
                                     </Form.Group>
                                     <Form.Group as={Col} md="10" controlId="get-message-body" className="message-text-input-container">
-                                        <Form.Control type="text" placeholder="type something" className="message-text-input"
+                                        <Form.Control type="text" placeholder="type something" className="message-text-input" value={currentTypingMessage}
                                         onChange={(event) => {
                                             setCurrentTypingMessage(event.target.value);
                                         }}/>
