@@ -38,7 +38,6 @@ function CreateOrJoinRoomPage(props) {
 
         /* ===== ===== ===== HTTP Requests ===== ===== ===== */
         const registerNewRoom = () => {
-            console.log("logging")
             fetch(
                 "http://localhost:8080/chatroom/create-room?" +
                 "uid=" + auth.user.uid + "&" +
@@ -62,11 +61,36 @@ function CreateOrJoinRoomPage(props) {
 
         }
 
+        const joinExistingRoom = () => {
+            fetch(
+                "http://localhost:8080/chatroom/add-user-to-room?" +
+                "uid=" + auth.user.uid + "&" +
+                "roomName=" + userEnteredRoomName,
+                {
+                    method: 'POST',
+                    headers: {
+                        token: auth.token,
+                        publicKey: auth.publicKey
+                    }
+                }
+            )
+                .then(response => {
+                    if (response.ok) {
+                        history.goBack();
+                    }
+                })
+                .catch(reason => {
+                    console.log(reason);
+                    alert("Something is wrong when entering the chatroom");
+                });
+
+        }
+
         return (
             <Form onSubmit={(event) => {
                 event.preventDefault();
-                console.log(props.flag)
                 if (props.flag == 0) registerNewRoom();
+                else joinExistingRoom();
             }}>
                 <Form.FloatingLabel controlId="room-name-input" label={placeholderFlagNameMapping[props.flag]}>
                     <Form.Control type="text" placeholder={placeholderFlagNameMapping[props.flag]} onChange={(event) => {setUserEnteredUserName(event.target.value)}}/>

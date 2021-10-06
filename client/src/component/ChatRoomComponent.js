@@ -89,7 +89,6 @@ function ChatRoom(props) {
         if (stompClient.connected)
             stompClient.subscribe(getTopicUrl(), (message) => {
                 setMessageSet((prevState => {
-                    alert(message)
                     return [...prevState, JSON.parse(message.body)]
                 }))
             }, {});
