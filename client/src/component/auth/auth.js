@@ -59,7 +59,7 @@ function useProvideAuth() {
         setCookies('publicKey', publicKey);
     }
 
-    let handleUserLogout = function (user, token) {
+    let handleUserLogout = function (user) {
         if (user == null) return;
         setLoginStatus(false);
         setCurrentUser({...currUser, uname: null, uid: -1, email: null})
