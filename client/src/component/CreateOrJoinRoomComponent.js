@@ -9,6 +9,7 @@ import {Button, Form} from "react-bootstrap";
 import {useAuth} from "./auth/auth";
 import {useHistory} from 'react-router-dom';
 import './style/createOrJoinRoomPage.css';
+import ReturnButtonComponent from './ReturnButtonComponent'
 
 function CreateOrJoinRoomPage(props) {
     /* ===== ===== ===== States & Hooks ===== ===== ===== */
@@ -110,6 +111,7 @@ function CreateOrJoinRoomPage(props) {
             </div>
             <CJButton flag={1} buttonText="Join a chatroom"/>
             {userOptionFlag === -1 ? null : <CJForm flag={userOptionFlag}/>}
+            <ReturnButtonComponent top={10} left={10} color="slateblue"/>
         </div>
     );
 }

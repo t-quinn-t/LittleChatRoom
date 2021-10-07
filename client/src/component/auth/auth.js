@@ -59,10 +59,11 @@ function useProvideAuth() {
         setCookies('publicKey', publicKey);
     }
 
-    let handleUserLogout = function (user, token) {
-        if (user == null) return;
+    let handleUserLogout = function () {
+        if (currUser == null) return;
         setLoginStatus(false);
         setCurrentUser({...currUser, uname: null, uid: -1, email: null})
+        storage.removeItem("user");
         removeCookies('token');
         removeCookies('publicKey');
     }

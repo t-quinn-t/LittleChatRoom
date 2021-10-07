@@ -1,6 +1,7 @@
 import {Row, Col, Container, Form, Button, Alert} from "react-bootstrap";
 import React, {useState} from "react";
 import './style/userRegisterForm.css'
+import ReturnButton from "./ReturnButtonComponent";
 
 function UserRegistrationForm (props) {
 
@@ -8,7 +9,6 @@ function UserRegistrationForm (props) {
     let [emailFromForm, setEmailFromForm] = useState(null);
     let [passwordFromForm, setPasswordFromForm] = useState(null);
     let [registrationStatus, setRegistrationStatus] = useState(0); // 0 - init, 1 - success, 2 - failure
-    const isLoggedIn = true;
     const registrationMessageList = [
         (<div/>),
         (
@@ -82,6 +82,7 @@ function UserRegistrationForm (props) {
                     </Row>
                 </Container>
             </Form>
+            <ReturnButton top={10} left={10} color="slateblue"/>
         </div>
     )
 }

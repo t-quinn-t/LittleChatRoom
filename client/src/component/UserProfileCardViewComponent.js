@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {useAuth} from "./auth/auth";
 import "./style/userProfileCardViewStyle.css"
+import ReturnButton from "./ReturnButtonComponent";
 /* <a href="https://icons8.com/icon/UXWIv5G5mWsK/settings">Settings icon by Icons8</a> */
 
 function UserProfileCardView(props) {
@@ -30,6 +31,7 @@ function UserProfileCardView(props) {
                     <img src="https://img.icons8.com/ios-filled/36/ffffff/settings.png"/>
                 </Link>
             </div>
+            <ReturnButton top={70} right={10} color="white"/>
         </div>
     )
 }

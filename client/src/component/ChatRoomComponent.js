@@ -124,6 +124,7 @@ function ChatRoom(props) {
 
     return (
         <div className="chatroom-container">
+
             <Container fluid>
                 <Row>
                     <Col md={3} id="chatroom-list-container">
