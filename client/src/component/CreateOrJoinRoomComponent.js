@@ -111,7 +111,7 @@ function CreateOrJoinRoomPage(props) {
             </div>
             <CJButton flag={1} buttonText="Join a chatroom"/>
             {userOptionFlag === -1 ? null : <CJForm flag={userOptionFlag}/>}
-            <ReturnButtonComponent></ReturnButtonComponent>
+            <ReturnButtonComponent top={10} left={10}/>
         </div>
     );
 }
