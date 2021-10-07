@@ -6,7 +6,6 @@ import './style/chatRoomStyle.css'
 import {useAuth} from "./auth/auth";
 import UserProfileCardView from "./UserProfileCardViewComponent";
 import {Link} from "react-router-dom";
-import ReturnButton from "./ReturnButtonComponent";
 
 function ChatRoom(props) {
 
@@ -125,6 +124,7 @@ function ChatRoom(props) {
 
     return (
         <div className="chatroom-container">
+
             <Container fluid>
                 <Row>
                     <Col md={3} id="chatroom-list-container">
@@ -182,7 +182,6 @@ function ChatRoom(props) {
                     </Col>
                 </Row>
             </Container>
-            <ReturnButton top={30} left="100"/>
         </div>
     )
 }
