@@ -82,4 +82,13 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         return user;
     }
 
+    @Override
+    public void updateUserSettings(User user, String userSettingsJsonStr) {
+
+    }
+
+    @Override
+    public String getUserSettings(User user) {
+        return null;
+    }
 }

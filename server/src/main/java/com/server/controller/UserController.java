@@ -1,3 +1,8 @@
+/**
+ * @author Quinn Tao
+ * @last updated on Oct 7
+ */
+
 package com.server.controller;
 
 import com.server.dao.UserDao;
@@ -118,7 +123,7 @@ public class UserController {
         return assembler.toModel(currUser);
     }
 
-    @PostMapping("/changePassword")
+    @PostMapping("/change-password")
     public EntityModel<User> updatePassword(@RequestParam String uname, @RequestParam CharSequence newPassword) {
         User currUser = userDao.findByIdentifier(uname, "uname", (long) -1);
         if (currUser == null)
@@ -137,5 +142,14 @@ public class UserController {
         if (currUser == null)
             throw new UserNotFoundException("unknown");
         userDao.delete(uid);
+    }
+
+    @PostMapping("/update-settings")
+    public void updateSettings(@RequestHeader String token, @RequestHeader byte[] publicKey,
+                               @RequestParam long uid, @RequestParam String serializedUserSettings) {
+        User currUser = userDao.findByIdentifier(null, null, uid);
+        if (currUser == null) {
+            throw new UserNotFoundException("unknown");
+        }
     }
 }
