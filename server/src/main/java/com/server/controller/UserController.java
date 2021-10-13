@@ -151,5 +151,16 @@ public class UserController {
         if (currUser == null) {
             throw new UserNotFoundException("unknown");
         }
+        userDao.updateUserSettings(currUser, serializedUserSettings);
+    }
+
+    @GetMapping("/get-settings")
+    public String getSettings(@RequestHeader String token, @RequestHeader byte[] publicKey,
+                            @RequestParam long uid) {
+        User currUser = userDao.findByIdentifier(null, null, uid);
+        if (currUser == null) {
+            throw new UserNotFoundException("unknown");
+        }
+        return userDao.getUserSettings(currUser);
     }
 }

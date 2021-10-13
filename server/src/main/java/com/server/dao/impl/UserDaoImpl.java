@@ -84,11 +84,18 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
 
     @Override
     public void updateUserSettings(User user, String userSettingsJsonStr) {
-
+        if (getJdbcTemplate() == null) throw new NullPointerException();
+        getJdbcTemplate().update("" +
+                "UPDATE public.user_settings SET settings_data = ? WHERE user_id_fk = ?",
+                userSettingsJsonStr, user.getUid());
     }
 
     @Override
     public String getUserSettings(User user) {
-        return null;
+        if (getJdbcTemplate() == null) throw new NullPointerException();
+        String ps = "SELECT settings_data FROM public.user_settings WHERE user_id_fk = ?";
+        return DataAccessUtils.singleResult(getJdbcTemplate().query(ps,
+                (resultSet, i) -> resultSet.getString(1),
+                user.getUid()));
     }
 }
