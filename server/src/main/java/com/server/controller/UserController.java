@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"}, exposedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"}, exposedHeaders = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -110,6 +110,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
+    @CrossOrigin(allowedHeaders = {"token","public-key"}, origins = "http://localhost:3000", exposedHeaders = {"token","publicKey"})
     public EntityModel<User> updateNameAndEmail(@RequestParam Long uid,
                                                 @RequestParam(required = false) String uname,
                                                 @RequestParam(required = false) String email,

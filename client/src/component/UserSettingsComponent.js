@@ -12,42 +12,33 @@ function UserSettingsForm(props) {
     const auth = useAuth();
     const storage = window.sessionStorage;
 
-    const [passwordInput, setPasswordInput] = useState("");
-    const [unameInput, setUnameInput] = useState(auth.user.uname);
-    const [emailInput, setEmailInput] = useState(auth.user.email);
-    const [colorInput, setColorInput] = useState("#fff");
-    const [fontSizeInput, setFontSizeInput] = useState(0);
+    function handleUserSettingsSubmission (event) {
 
-    function assembleRequestURL() {
+        event.preventDefault();
+
+        // Capture a snapshot of all current state values
+        const unameInput = _unameInput;
+        const emailInput = _emailInput;
+        const passwordInput = _passwordInput;
+        const colorInput = _colorInput;
+        const fontSizeInput = _fontSizeInput;
+
         const url = "http://localhost:8080/user/update?" +
             "uid=" + auth.user.uid +
             (unameInput === auth.user.uname ? "" : ("&" + "uname=" + unameInput)) +
             (emailInput === auth.user.email ? "" : ("&" + "email=" + emailInput)) +
             (passwordInput === "" ? "" : ("&" + "newPassword=" + passwordInput)) + "&" +
-            JSON.stringify({
+            "serializedUserSettings=" + JSON.stringify({
                 "accentColor": colorInput,
                 "fontSize": fontSizeInput
-            })
-        console.log(unameInput);
-        console.log(auth.user.uname)
-        console.log(url)
-        return url;
-    }
+            });
 
-    function handleUserSettingsSubmission (event) {
-        setUnameInput(_unameInput);
-        setEmailInput(_emailInput);
-        setPasswordInput(_passwordInput);
-        setColorInput(_colorInput);
-        setFontSizeInput(_fontSizeInput);
-        console.log(unameInput);
-        event.preventDefault();
-        // Update Account
-        fetch(assembleRequestURL(), {
+        // Update backend
+        fetch(url, {
             method: "POST",
             headers: {
-                "token": auth.token,
-                "publicKey": auth.publicKey
+                token: auth.token,
+                publicKey: auth.publicKey
             }
         })
             .then(res => {
