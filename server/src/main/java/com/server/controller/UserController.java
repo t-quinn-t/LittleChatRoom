@@ -110,8 +110,13 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public EntityModel<User> updateNameAndEmail(@RequestParam Long uid, @RequestParam(required = false) String uname,
-                                                @RequestParam(required = false) String email) {
+    public EntityModel<User> updateNameAndEmail(@RequestParam Long uid,
+                                                @RequestParam(required = false) String uname,
+                                                @RequestParam(required = false) String email,
+                                                @RequestParam(required = false) CharSequence newPassword,
+                                                @RequestParam(required = false) String serializedUserSettings,
+                                                @RequestHeader String token,
+                                                @RequestHeader byte[] publicKey) {
         User currUser = userDao.findByIdentifier(null, null, uid);
         if (currUser == null)
             throw new UserNotFoundException("unknown"); // uid is hidden
@@ -119,19 +124,15 @@ public class UserController {
             currUser.setName(uname);
         if (email != null)
             currUser.setEmail(email);
-        userDao.updateUser(currUser);
-        return assembler.toModel(currUser);
-    }
-
-    @PostMapping("/change-password")
-    public EntityModel<User> updatePassword(@RequestParam String uname, @RequestParam CharSequence newPassword) {
-        User currUser = userDao.findByIdentifier(uname, "uname", (long) -1);
-        if (currUser == null)
-            throw new UserNotFoundException(uname);
-        if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
-            throw new PasswordSameException();
+        if (newPassword != null) {
+            if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
+                throw new PasswordSameException();
+            }
+            currUser.setPassword(passwordEncoder.encode(newPassword));
         }
-        currUser.setPassword(passwordEncoder.encode(newPassword));
+        if (serializedUserSettings != null) {
+            userDao.updateUserSettings(currUser, serializedUserSettings);
+        }
         userDao.updateUser(currUser);
         return assembler.toModel(currUser);
     }
@@ -152,15 +153,5 @@ public class UserController {
             throw new UserNotFoundException("unknown");
         }
         userDao.updateUserSettings(currUser, serializedUserSettings);
-    }
-
-    @GetMapping("/get-settings")
-    public String getSettings(@RequestHeader String token, @RequestHeader byte[] publicKey,
-                            @RequestParam long uid) {
-        User currUser = userDao.findByIdentifier(null, null, uid);
-        if (currUser == null) {
-            throw new UserNotFoundException("unknown");
-        }
-        return userDao.getUserSettings(currUser);
     }
 }

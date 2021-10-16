@@ -1,14 +1,46 @@
 /**
  * @author Quinn Tao
- * @last updated Oct 14
+ * @last updated Oct 15
  */
 
-import React from 'react';
-import {Col, Form, FormLabel, Row, FormCheck} from "react-bootstrap";
+import React, {useEffect, useState} from 'react';
+import {Col, Form, FormLabel, Row, Button} from "react-bootstrap";
 import {useAuth} from "./auth/auth";
+import {useCookies} from "react-cookie";
 
 function UserSettingsForm(props) {
-    let auth = useAuth();
+    const auth = useAuth();
+    const storage = window.sessionStorage;
+
+    const [passwordInput, setPasswordInput] = useState("");
+    const [unameInput, setUnameInput] = useState(auth.user.uname);
+    const [emailInput, setEmailInput] = useState(auth.user.email);
+    const [colorInput, setColorInput] = useState("#fff");
+    const [fontSizeInput, setFontSizeInput] = useState(0);
+
+    function assembleRequestURL() {
+        return "http://localhost:8080/user/update?" +
+            "uid=" + auth.user.uid +
+            unameInput === auth.user.uname ? "" : ("&" + "uname=" + unameInput) +
+            emailInput === auth.user.email ? "" : ("&" + "email=" + emailInput) +
+            passwordInput === "" ? "" : ("&" + "newPassword=" + passwordInput) +
+            JSON.stringify({
+                "accentColor": colorInput,
+                "fontSize": fontSizeInput
+            })
+    }
+
+    function handleUserSettingsSubmission (event) {
+        // Update Account
+        fetch(assembleRequestURL())
+            .then(res => {
+                if (res.ok) {
+                    storage.setItem("accentColor", colorInput);
+                    storage.setItem("fontSize", fontSizeInput);
+
+                }
+            })
+    }
 
     return (
         <div className="settings-form-container">
@@ -39,7 +71,7 @@ function UserSettingsForm(props) {
                         </Form.Control>
                     </Col>
                 </Form.Group>
-                <Form.Group as={Row} className="mb-3" controlId="password-input-form-row">
+                <Form.Group as={Row} className="mb-3" controlId="color-input-form-row">
                     <FormLabel column sm="1" className="settings-form-labels">
                         Accent color
                     </FormLabel>
@@ -49,7 +81,7 @@ function UserSettingsForm(props) {
                         </Form.Control>
                     </Col>
                 </Form.Group>
-                <Form.Group as={Row} className="mb-3" controlId="password-input-form-row">
+                <Form.Group as={Row} className="mb-3" controlId="fontsize-input-form-row">
                     <FormLabel column sm="1" className="settings-form-labels">
                         Accent color
                     </FormLabel>
@@ -61,6 +93,9 @@ function UserSettingsForm(props) {
                         </div>
                     </Col>
                 </Form.Group>
+                <Button type="submit" variant="primary">
+                    Save
+                </Button>
             </Form>
         </div>
     )

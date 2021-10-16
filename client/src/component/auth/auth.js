@@ -79,6 +79,7 @@ function useProvideAuth() {
     return {
         status: isLoggedIn,
         user: currUser,
+        setUser: setCurrentUser,
         token: getToken(),
         publicKey: getPublicKey(),
         logIn: handleUserLogin,
