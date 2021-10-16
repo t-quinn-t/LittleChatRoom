@@ -19,38 +19,65 @@ function UserSettingsForm(props) {
     const [fontSizeInput, setFontSizeInput] = useState(0);
 
     function assembleRequestURL() {
-        return "http://localhost:8080/user/update?" +
+        const url = "http://localhost:8080/user/update?" +
             "uid=" + auth.user.uid +
-            unameInput === auth.user.uname ? "" : ("&" + "uname=" + unameInput) +
-            emailInput === auth.user.email ? "" : ("&" + "email=" + emailInput) +
-            passwordInput === "" ? "" : ("&" + "newPassword=" + passwordInput) +
+            (unameInput === auth.user.uname ? "" : ("&" + "uname=" + unameInput)) +
+            (emailInput === auth.user.email ? "" : ("&" + "email=" + emailInput)) +
+            (passwordInput === "" ? "" : ("&" + "newPassword=" + passwordInput)) + "&" +
             JSON.stringify({
                 "accentColor": colorInput,
                 "fontSize": fontSizeInput
             })
+        console.log(unameInput);
+        console.log(auth.user.uname)
+        console.log(url)
+        return url;
     }
 
     function handleUserSettingsSubmission (event) {
+        setUnameInput(_unameInput);
+        setEmailInput(_emailInput);
+        setPasswordInput(_passwordInput);
+        setColorInput(_colorInput);
+        setFontSizeInput(_fontSizeInput);
+        console.log(unameInput);
+        event.preventDefault();
         // Update Account
-        fetch(assembleRequestURL())
+        fetch(assembleRequestURL(), {
+            method: "POST",
+            headers: {
+                "token": auth.token,
+                "publicKey": auth.publicKey
+            }
+        })
             .then(res => {
+                console.log(9);
                 if (res.ok) {
                     storage.setItem("accentColor", colorInput);
                     storage.setItem("fontSize", fontSizeInput);
-
+                    auth.updateName(unameInput);
+                    auth.updateEmail(emailInput);
                 }
             })
+            .catch(err => console.log("Error!!!!"))
     }
 
+    // These are the states used for holding values from input fields temporarily
+    const [_passwordInput, setPasswordInputT] = useState("");
+    const [_unameInput, setUnameInputT] = useState(auth.user.uname);
+    const [_emailInput, setEmailInputT] = useState(auth.user.email);
+    const [_colorInput, setColorInputT] = useState("#fff");
+    const [_fontSizeInput, setFontSizeInputT] = useState(0);
+
     return (
-        <div className="settings-form-container">
+        <div className="settings-form-container" onSubmit={handleUserSettingsSubmission}>
             <Form>
                 <Form.Group as={Row} className="mb-3" controlId="password-input-form-row">
                     <FormLabel column sm="1" className="settings-form-labels">
                         Reset Password
                     </FormLabel>
                     <Col sm={"11"}>
-                        <Form.Control type="password"/>
+                        <Form.Control type="password" onChange={e => setPasswordInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="uname-input-form-row">
@@ -58,7 +85,7 @@ function UserSettingsForm(props) {
                         Rename yourself
                     </FormLabel>
                     <Col sm={"11"}>
-                        <Form.Control type="text"/>
+                        <Form.Control type="text" onChange={e => setUnameInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="email-input-form-row">
@@ -66,9 +93,7 @@ function UserSettingsForm(props) {
                         Reset email address
                     </FormLabel>
                     <Col sm={"11"}>
-                        <Form.Control type="password">
-
-                        </Form.Control>
+                        <Form.Control type="password" onChange={e => setEmailInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="color-input-form-row">
@@ -76,9 +101,7 @@ function UserSettingsForm(props) {
                         Accent color
                     </FormLabel>
                     <Col sm={"11"}>
-                        <Form.Control type="color" placeholder="#fff">
-
-                        </Form.Control>
+                        <Form.Control type="color" placeholder="#fff" onChange={e => setColorInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="fontsize-input-form-row">
@@ -87,9 +110,15 @@ function UserSettingsForm(props) {
                     </FormLabel>
                     <Col sm={"11"}>
                         <div className="mb-3">
-                            <Form.Check inline type="radio" label="A" name="txt-size-opt" id="1"/>
-                            <Form.Check inline type="radio" label="A" name="txt-size-opt" id="2"/>
-                            <Form.Check inline type="radio" label="A" name="txt-size-opt" id="3"/>
+                            <Form.Check inline type="radio" label="A" name="txt-size-opt" id="1"
+                                        onSelect={e => setFontSizeInputT(0)}
+                            />
+                            <Form.Check inline type="radio" label="A" name="txt-size-opt" id="2"
+                                        onSelect={e => setFontSizeInputT(1)}
+                            />
+                            <Form.Check inline type="radio" label="A" name="txt-size-opt" id="3"
+                                        onSelect={e => setFontSizeInputT(2)}
+                            />
                         </div>
                     </Col>
                 </Form.Group>

@@ -68,6 +68,14 @@ function useProvideAuth() {
         removeCookies('publicKey');
     }
 
+    let handleNameUpdate = function (newName) {
+        setCurrentUser({...currUser, uname: newName});
+    }
+
+    let handleEmailUpdate = function (newEmail) {
+        setCurrentUser({...currUser, email: newEmail});
+    }
+
     let getToken = function () {
         return cookies.token;
     }
@@ -79,7 +87,8 @@ function useProvideAuth() {
     return {
         status: isLoggedIn,
         user: currUser,
-        setUser: setCurrentUser,
+        updateName: handleNameUpdate,
+        updateEmail: handleEmailUpdate,
         token: getToken(),
         publicKey: getPublicKey(),
         logIn: handleUserLogin,
