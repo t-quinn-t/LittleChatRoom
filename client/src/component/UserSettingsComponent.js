@@ -25,13 +25,13 @@ function UserSettingsForm(props) {
 
         const url = "http://localhost:8080/user/update?" +
             "uid=" + auth.user.uid +
-            (unameInput === auth.user.uname ? "" : ("&" + "uname=" + unameInput)) +
-            (emailInput === auth.user.email ? "" : ("&" + "email=" + emailInput)) +
+            (unameInput === auth.user.uname || unameInput == "" ? "" : ("&" + "uname=" + unameInput)) +
+            (emailInput === auth.user.email || emailInput == "" ? "" : ("&" + "email=" + emailInput)) +
             (passwordInput === "" ? "" : ("&" + "newPassword=" + passwordInput)) + "&" +
-            "serializedUserSettings=" + JSON.stringify({
+            "serializedUserSettings=" + encodeURIComponent(JSON.stringify({
                 "accentColor": colorInput,
                 "fontSize": fontSizeInput
-            });
+            }));
 
         // Update backend
         fetch(url, {
@@ -42,7 +42,6 @@ function UserSettingsForm(props) {
             }
         })
             .then(res => {
-                console.log(9);
                 if (res.ok) {
                     storage.setItem("accentColor", colorInput);
                     storage.setItem("fontSize", fontSizeInput);
