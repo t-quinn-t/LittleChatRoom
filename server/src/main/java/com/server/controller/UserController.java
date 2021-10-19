@@ -1,3 +1,8 @@
+/**
+ * @author Quinn Tao
+ * @last updated on Oct 7
+ */
+
 package com.server.controller;
 
 import com.server.dao.UserDao;
@@ -8,6 +13,9 @@ import com.server.exception.UserNotFoundException;
 import com.server.model.User;
 import com.server.model_assembler.UserModelAssembler;
 import com.server.service.JWTAuthService;
+import net.minidev.json.JSONObject;
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +25,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"}, exposedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"}, exposedHeaders = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -105,8 +115,14 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public EntityModel<User> updateNameAndEmail(@RequestParam Long uid, @RequestParam(required = false) String uname,
-                                                @RequestParam(required = false) String email) {
+    @CrossOrigin(allowedHeaders = {"token","public-key"}, origins = "http://localhost:3000", exposedHeaders = {"token","publicKey"})
+    public EntityModel<User> updateNameAndEmail(@RequestParam Long uid,
+                                                @RequestParam(required = false) String uname,
+                                                @RequestParam(required = false) String email,
+                                                @RequestParam(required = false) CharSequence newPassword,
+                                                @RequestParam(required = false) String serializedUserSettings,
+                                                @RequestHeader String token,
+                                                @RequestHeader byte[] publicKey) {
         User currUser = userDao.findByIdentifier(null, null, uid);
         if (currUser == null)
             throw new UserNotFoundException("unknown"); // uid is hidden
@@ -114,19 +130,15 @@ public class UserController {
             currUser.setName(uname);
         if (email != null)
             currUser.setEmail(email);
-        userDao.updateUser(currUser);
-        return assembler.toModel(currUser);
-    }
-
-    @PostMapping("/changePassword")
-    public EntityModel<User> updatePassword(@RequestParam String uname, @RequestParam CharSequence newPassword) {
-        User currUser = userDao.findByIdentifier(uname, "uname", (long) -1);
-        if (currUser == null)
-            throw new UserNotFoundException(uname);
-        if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
-            throw new PasswordSameException();
+        if (newPassword != null) {
+            if (passwordEncoder.matches(newPassword, currUser.getPassword())) {
+                throw new PasswordSameException();
+            }
+            currUser.setPassword(passwordEncoder.encode(newPassword));
         }
-        currUser.setPassword(passwordEncoder.encode(newPassword));
+        if (serializedUserSettings != null) {
+            userDao.updateUserSettings(currUser, serializedUserSettings);
+        }
         userDao.updateUser(currUser);
         return assembler.toModel(currUser);
     }
@@ -137,5 +149,15 @@ public class UserController {
         if (currUser == null)
             throw new UserNotFoundException("unknown");
         userDao.delete(uid);
+    }
+
+    @PostMapping("/update-settings")
+    public void updateSettings(@RequestHeader String token, @RequestHeader byte[] publicKey,
+                               @RequestParam long uid, @RequestParam String serializedUserSettings) {
+        User currUser = userDao.findByIdentifier(null, null, uid);
+        if (currUser == null) {
+            throw new UserNotFoundException("unknown");
+        }
+        userDao.updateUserSettings(currUser, serializedUserSettings);
     }
 }

@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {useAuth} from "./auth/auth";
 import "./style/userProfileCardViewStyle.css"
 import ReturnButton from "./ReturnButtonComponent";
+import {getAccentColor, getFontSize} from "../util";
 /* <a href="https://icons8.com/icon/UXWIv5G5mWsK/settings">Settings icon by Icons8</a> */
 
 function UserProfileCardView(props) {
@@ -19,7 +20,7 @@ function UserProfileCardView(props) {
     }
 
     return (
-        <div className="user-profile-card-view-container">
+        <div className="user-profile-card-view-container" style={{fontSize: getFontSize(), backgroundColor: getAccentColor()}}>
             <div className="user-clock-container">
                 <p id="user-clock">{clock}</p>
             </div>

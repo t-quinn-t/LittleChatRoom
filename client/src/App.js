@@ -7,6 +7,7 @@ import ChatRoom from "./component/ChatRoomComponent";
 import {ProvideAuth, useAuth} from "./component/auth/auth";
 import UserRegistrationForm from "./component/UserRegistrationFormComponent";
 import CreateOrJoinRoomPage from "./component/CreateOrJoinRoomComponent";
+import UserSettingsForm from "./component/UserSettingsComponent";
 
 /**
  * Redirects to Login if user not logged in;
@@ -51,6 +52,9 @@ function App() {
                       <Route path="/register">
                           <UserRegistrationForm/>
                       </Route>
+                      <PrivateRoute path="/settings">
+                          <UserSettingsForm/>
+                      </PrivateRoute>
                   </Switch>
               </Router>
           </div>

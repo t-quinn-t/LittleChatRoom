@@ -2,10 +2,15 @@ package com.server.dao.impl;
 
 import com.server.dao.UserDao;
 import com.server.model.User;
+import net.minidev.json.JSONObject;
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
@@ -82,4 +87,23 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         return user;
     }
 
+    @Override
+    public void updateUserSettings(User user, String userSettingsJsonStr) {
+        if (getJdbcTemplate() == null) throw new NullPointerException();
+        String ps = "INSERT INTO public.user_settings(user_id_fk, settings_data)" +
+                "VALUES(?, ?::JSONB)" +
+                "ON CONFLICT (user_id_fk)" +
+                "DO UPDATE SET settings_data = ?::JSONB";
+        getJdbcTemplate().update(ps, user.getUid(), userSettingsJsonStr, userSettingsJsonStr);
+
+    }
+
+    @Override
+    public String getUserSettings(User user) {
+        if (getJdbcTemplate() == null) throw new NullPointerException();
+        String ps = "SELECT settings_data FROM public.user_settings WHERE user_id_fk = ?";
+        return DataAccessUtils.singleResult(getJdbcTemplate().query(ps,
+                (resultSet, i) -> resultSet.getString(1),
+                user.getUid()));
+    }
 }

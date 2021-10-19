@@ -50,3 +50,12 @@ create table if not exists ec_keypairs (
 	public_key bytea primary key not null,
 	private_key bytea not null
 );
+
+CREATE TABLE IF NOT EXISTS public.user_settings
+(
+    settings_id serial UNIQUE NOT NULL,
+    user_id_fk bigint UNIQUE NOT NULL,
+    settings_data jsonb NOT NULL,
+    PRIMARY KEY (settings_id, user_id_fk),
+	foreign key (user_id_fk) references users(uid)
+);

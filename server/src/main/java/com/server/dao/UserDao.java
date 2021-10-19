@@ -16,4 +16,6 @@ public interface UserDao {
      * @return a single user or null if failed
      */
     public User findByIdentifier(String identifier, String idType, Long uid);
+    public void updateUserSettings(User user, String userSettingsJsonStr);
+    public String getUserSettings(User user);
 }

@@ -6,6 +6,7 @@ import './style/chatRoomStyle.css'
 import {useAuth} from "./auth/auth";
 import UserProfileCardView from "./UserProfileCardViewComponent";
 import {Link} from "react-router-dom";
+import {getAccentColor, getFontSize} from "../util";
 
 function ChatRoom(props) {
 
@@ -123,7 +124,7 @@ function ChatRoom(props) {
     }
 
     return (
-        <div className="chatroom-container">
+        <div className="chatroom-container" style={{fontSize: getFontSize()}}>
 
             <Container fluid>
                 <Row>
@@ -134,12 +135,13 @@ function ChatRoom(props) {
                                 return (
                                     <ListGroupItem key={"room-"+index} variant="light" action onClick={(e) => {
                                         setCurrentRoom(chatroom);
-                                    }}>{chatroom.name}</ListGroupItem>
+                                    }}
+                                    >{chatroom.name}</ListGroupItem>
                                 )
                             })}
                         </ListGroup>
                         <Link to="/create-or-join-room" id="chatroom-plus-btn-box">
-                            <button className="chatroom-plus-btn"/>
+                            <button className="chatroom-plus-btn" style={{backgroundColor: getAccentColor()}}/>
                         </Link>
                     </Col>
                     <Col md={9} id="chatroom-col">
@@ -148,14 +150,14 @@ function ChatRoom(props) {
                                 {messageSet.map((message, index) => {
                                     return  <li key={index}>
                                                 <div className="message-row-wrapper">
-                                                    <div className={message.sender === auth.user.uname ? "message-my-name-box": "message-user-name-box"}>
+                                                    <div className={message.sender === auth.user.uname ? "message-my-name-box": "message-user-name-box"}
+                                                    >
                                                         {message.sender}
                                                     </div>
-                                                    <div className={
-                                                        message.sender === auth.user.uname ? "chatroom-ours-message-box" : "chatroom-others-message-box"
-                                                    }>
-                                                        {message.content}
-                                                    </div>
+                                                    {message.sender === auth.user.uname ?
+                                                        <div className="chatroom-ours-message-box">{message.content}</div> :
+                                                        <div className="chatroom-others-message-box" style={{backgroundColor: getAccentColor()}}>{message.content}</div>
+                                                    }
                                                 </div>
                                             </li>
                                 })}
@@ -165,7 +167,9 @@ function ChatRoom(props) {
                             <Form onSubmit={sendMessage}>
                                 <Row>
                                     <Form.Group as={Col} md="2" controlId="send-button" className="send-message-btn-container">
-                                        <Button variant="primary" type="submit" id="send-message-btn">
+                                        <Button variant="primary" type="submit" id="send-message-btn"
+                                                style={{backgroundColor: getAccentColor(), borderColor: getAccentColor()}}
+                                        >
                                             Send
                                         </Button>
                                     </Form.Group>
