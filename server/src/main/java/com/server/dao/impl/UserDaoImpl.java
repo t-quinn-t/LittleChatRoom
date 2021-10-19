@@ -2,10 +2,15 @@ package com.server.dao.impl;
 
 import com.server.dao.UserDao;
 import com.server.model.User;
+import net.minidev.json.JSONObject;
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
@@ -85,9 +90,12 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     @Override
     public void updateUserSettings(User user, String userSettingsJsonStr) {
         if (getJdbcTemplate() == null) throw new NullPointerException();
-        getJdbcTemplate().update("" +
-                "UPDATE public.user_settings SET settings_data = ? WHERE user_id_fk = ?",
-                userSettingsJsonStr, user.getUid());
+        String ps = "INSERT INTO public.user_settings(user_id_fk, settings_data)" +
+                "VALUES(?, ?::JSONB)" +
+                "ON CONFLICT (user_id_fk)" +
+                "DO UPDATE SET settings_data = ?::JSONB";
+        getJdbcTemplate().update(ps, user.getUid(), userSettingsJsonStr, userSettingsJsonStr);
+
     }
 
     @Override

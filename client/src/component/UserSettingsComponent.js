@@ -6,7 +6,8 @@
 import React, {useEffect, useState} from 'react';
 import {Col, Form, FormLabel, Row, Button} from "react-bootstrap";
 import {useAuth} from "./auth/auth";
-import {useCookies} from "react-cookie";
+import {getFontSize, getAccentColor} from "../util";
+import ReturnButton from "./ReturnButtonComponent";
 
 function UserSettingsForm(props) {
     const auth = useAuth();
@@ -23,6 +24,7 @@ function UserSettingsForm(props) {
         const colorInput = _colorInput;
         const fontSizeInput = _fontSizeInput;
 
+        alert(getAccentColor())
         const url = "http://localhost:8080/user/update?" +
             "uid=" + auth.user.uid +
             (unameInput === auth.user.uname || unameInput == "" ? "" : ("&" + "uname=" + unameInput)) +
@@ -58,10 +60,10 @@ function UserSettingsForm(props) {
     const [_emailInput, setEmailInputT] = useState(auth.user.email);
     const [_colorInput, setColorInputT] = useState("#fff");
     const [_fontSizeInput, setFontSizeInputT] = useState(0);
-
     return (
-        <div className="settings-form-container" onSubmit={handleUserSettingsSubmission}>
-            <Form>
+        <div className="settings-form-container" style={{fontSize: getFontSize()}}>
+            <ReturnButton top={10} left={10} color={getAccentColor()}/>
+            <Form onSubmit={handleUserSettingsSubmission}>
                 <Form.Group as={Row} className="mb-3" controlId="password-input-form-row">
                     <FormLabel column sm="1" className="settings-form-labels">
                         Reset Password
@@ -101,13 +103,16 @@ function UserSettingsForm(props) {
                     <Col sm={"11"}>
                         <div className="mb-3">
                             <Form.Check inline type="radio" label="A" name="txt-size-opt" id="1"
-                                        onSelect={e => setFontSizeInputT(0)}
+                                        onClick={e => setFontSizeInputT(0)}
+                                        style={{fontSize: "16px"}}
                             />
                             <Form.Check inline type="radio" label="A" name="txt-size-opt" id="2"
-                                        onSelect={e => setFontSizeInputT(1)}
+                                        onClick={e => setFontSizeInputT(1)}
+                                        style={{fontSize: "18px"}}
                             />
                             <Form.Check inline type="radio" label="A" name="txt-size-opt" id="3"
-                                        onSelect={e => setFontSizeInputT(2)}
+                                        onClick={e => setFontSizeInputT(2)}
+                                        style={{fontSize: "20px"}}
                             />
                         </div>
                     </Col>

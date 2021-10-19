@@ -53,8 +53,8 @@ create table if not exists ec_keypairs (
 
 CREATE TABLE IF NOT EXISTS public.user_settings
 (
-    settings_id serial NOT NULL,
-    user_id_fk bigint NOT NULL,
+    settings_id serial UNIQUE NOT NULL,
+    user_id_fk bigint UNIQUE NOT NULL,
     settings_data jsonb NOT NULL,
     PRIMARY KEY (settings_id, user_id_fk),
 	foreign key (user_id_fk) references users(uid)
