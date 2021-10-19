@@ -10,6 +10,7 @@ import {useAuth} from "./auth/auth";
 import {useHistory} from 'react-router-dom';
 import './style/createOrJoinRoomPage.css';
 import ReturnButtonComponent from './ReturnButtonComponent'
+import {getAccentColor, getFontSize} from "../util";
 
 function CreateOrJoinRoomPage(props) {
     /* ===== ===== ===== States & Hooks ===== ===== ===== */
@@ -104,14 +105,14 @@ function CreateOrJoinRoomPage(props) {
 
     /* ===== ===== ===== Render ===== ===== ===== */
     return (
-        <div className="cjroom-container">
+        <div className="cjroom-container" style={{fontSize: getFontSize()}}>
             <CJButton flag={0} buttonText="Create a chatroom"/>
             <div>
                 <p>OR</p>
             </div>
             <CJButton flag={1} buttonText="Join a chatroom"/>
             {userOptionFlag === -1 ? null : <CJForm flag={userOptionFlag}/>}
-            <ReturnButtonComponent top={10} left={10} color="slateblue"/>
+            <ReturnButtonComponent top={10} left={10} color={getAccentColor()}/>
         </div>
     );
 }
