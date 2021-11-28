@@ -8,6 +8,7 @@ import {Col, Form, FormLabel, Row, Button} from "react-bootstrap";
 import {useAuth} from "./auth/auth";
 import {getFontSize, getAccentColor} from "../util";
 import ReturnButton from "./ReturnButtonComponent";
+import "./style/userSettins.css";
 
 function UserSettingsForm(props) {
     const auth = useAuth();
@@ -24,7 +25,6 @@ function UserSettingsForm(props) {
         const colorInput = _colorInput;
         const fontSizeInput = _fontSizeInput;
 
-        alert(getAccentColor())
         const url = "http://localhost:8080/user/update?" +
             "uid=" + auth.user.uid +
             (unameInput === auth.user.uname || unameInput == "" ? "" : ("&" + "uname=" + unameInput)) +
@@ -65,42 +65,42 @@ function UserSettingsForm(props) {
             <ReturnButton top={10} left={10} color={getAccentColor()}/>
             <Form onSubmit={handleUserSettingsSubmission}>
                 <Form.Group as={Row} className="mb-3" controlId="password-input-form-row">
-                    <FormLabel column sm="1" className="settings-form-labels">
+                    <FormLabel column sm="3" className="settings-form-labels">
                         Reset Password
                     </FormLabel>
-                    <Col sm={"11"}>
+                    <Col sm={"9"}>
                         <Form.Control type="password" onChange={e => setPasswordInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="uname-input-form-row">
-                    <FormLabel column sm="1" className="settings-form-labels">
+                    <FormLabel column sm="3" className="settings-form-labels">
                         Rename yourself
                     </FormLabel>
-                    <Col sm={"11"}>
+                    <Col sm={"9"}>
                         <Form.Control type="text" onChange={e => setUnameInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="email-input-form-row">
-                    <FormLabel column sm="1" className="settings-form-labels">
+                    <FormLabel column sm="3" className="settings-form-labels">
                         Reset email address
                     </FormLabel>
-                    <Col sm={"11"}>
+                    <Col sm={"9"}>
                         <Form.Control type="password" onChange={e => setEmailInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="color-input-form-row">
-                    <FormLabel column sm="1" className="settings-form-labels">
+                    <FormLabel column sm="3" className="settings-form-labels">
                         Accent color
                     </FormLabel>
-                    <Col sm={"11"}>
+                    <Col sm={"9"}>
                         <Form.Control type="color" placeholder="#fff" onChange={e => setColorInputT(e.target.value)}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="fontsize-input-form-row">
-                    <FormLabel column sm="1" className="settings-form-labels">
-                        Accent color
+                    <FormLabel column sm="3" className="settings-form-labels">
+                        Text size
                     </FormLabel>
-                    <Col sm={"11"}>
+                    <Col sm={"9"}>
                         <div className="mb-3">
                             <Form.Check inline type="radio" label="A" name="txt-size-opt" id="1"
                                         onClick={e => setFontSizeInputT(0)}
