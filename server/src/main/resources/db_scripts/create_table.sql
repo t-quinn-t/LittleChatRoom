@@ -1,61 +1,78 @@
--- we probably need to support multiple chatroom 
-create table if not exists chatrooms (
-	room_id serial primary key not null,
-	room_name varchar(50) not null
+-- @author: Quinn Tao
+-- @last updated on Dec 31
+
+-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝　Users Table　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝－－
+CREATE TABLE IF NOT EXISTS users (
+  user_id SERIAL PRIMARY KEY NOT NULL,
+  user_name VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL,
+  registered_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  password VARCHAR(100) NOT NULL,
+  private_key BYTEA
 );
 
-create table if not exists users (
-	uid serial primary key not null,
-	uname varchar(50) not null,
-	registered_time timestamp with time zone not null default now(),
-	updated_time timestamp with time zone not null default now(),
-	email varchar(100) not null,
-	pwd varchar(100) not null
-);
-
-create or replace function update_user_trigger()
-returns trigger as
+CREATE OR REPLACE FUNCTION update_user_trigger()
+RETURNS TRIGGER AS
 $$
-	begin
-	new.updated_time = now();
-	return new;
-	end;
-$$ language plpgsql;
+    BEGIN
+    new.updated_time = now();
+    RETURN new;
+    END;
+$$ LANGUAGE plpgsql;
 
-drop trigger if exists update_users on users;
-create trigger update_users
-	before update on users
-	for each row 
-	execute procedure update_user_trigger();
+DROP TRIGGER if EXISTS update_user ON users;
+CREATE TRIGGER update_user BEFORE UPDATE ON users FOR EACH ROW
+    EXECUTE PROCEDURE update_user_trigger();
 
-create table if not exists messages (
-	message_id serial primary key not null,
-	from_user bigint not null,
-	from_room bigint not null,
-	message_content varchar(256) not null,
-	sent_time timestamp with time zone not null default now(),
-	foreign key(from_user) references users(uid),
-	foreign key(from_room) references chatrooms(room_id)
+-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝　Chatrooms Table　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝－－
+CREATE TABLE IF NOT EXISTS chatrooms (
+    room_id SERIAL PRIMARY KEY NOT NULL,
+    room_name VARCHAR(50) NOT NULL,
+    host_id BIGINT NOT NULL,
+    FOREIGN KEY (host_id) REFERENCES users ON DELETE NO ACTION
 );
 
-create table if not exists chatroom_user_mapping (
-	registration_id serial primary key not null,
-	room_id_fk bigint not null,
-	user_id_fk bigint not null,
-	foreign key(room_id_fk) references chatrooms(room_id),
-	foreign key(user_id_fk) references users(uid)
+-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝　Messages Table　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝－－
+CREATE TABLE IF NOT EXISTS messages (
+	message_id SERIAL PRIMARY KEY NOT NULL,
+	from_user BIGINT NOT NULL,
+	from_room BIGINT NOT NULL,
+	message_content VARCHAR(256) NOT NULL,
+	sent_time TIMESTAMP WITH TIME ZONE DEFAULT now(),
+	FOREIGN KEY (from_user) REFERENCES users(user_id) ON DELETE CASCADE,
+	FOREIGN KEY (from_room) REFERENCES chatrooms(room_id) ON DELETE CASCADE
 );
 
-create table if not exists ec_keypairs (
-	public_key bytea primary key not null,
-	private_key bytea not null
+-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝　Chatroom_User_Mappings Table　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝－－
+CREATE TABLE IF NOT EXISTS chatroom_user_mappings (
+	registration_id serial PRIMARY KEY NOT NULL,
+	room_id BIGINT NOT NULL,
+	user_id BIGINT NOT NULL,
+    user_nickname VARCHAR(50),
+    as_role BIGINT NOT NULL,
+	FOREIGN KEY (room_id) REFERENCES chatrooms(room_id) ON DELETE CASCADE,
+	FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS public.user_settings
+-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝　User_Preferences Table　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝－－
+CREATE TABLE IF NOT EXISTS user_preferences
 (
-    settings_id serial UNIQUE NOT NULL,
-    user_id_fk bigint UNIQUE NOT NULL,
-    settings_data jsonb NOT NULL,
-    PRIMARY KEY (settings_id, user_id_fk),
-	foreign key (user_id_fk) references users(uid)
+    preference_id SERIAL UNIQUE NOT NULL,
+    user_id BIGINT UNIQUE NOT NULL,
+    ui_preference_data JSONB NOT NULL,
+    notification_preference_data JSONB NOT NULL,
+    PRIMARY KEY (preference_id, user_id),
+	FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝　Role_Permissions Table　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝－－
+CREATE TABLE IF NOT EXISTS role_specifications 
+(
+    role_spec_id SERIAL UNIQUE NOT NULL,
+    role_nickname VARCHAR(50) NOT NULL, 
+    role_permission_data JSONB,
+    user_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE 
+)
+
