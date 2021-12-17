@@ -67,10 +67,10 @@ public class UserController {
 
         /* ===== ===== ==== Check if user already exists ====== ===== ===== */
         logger.info("Checking new user sanity");
-        User relatedUser = userDao.findByIdentifier(uname, "uname", -1L);
+        User relatedUser = userDao.getUserByUserName(uname);
         if (relatedUser != null)
             throw new UserAlreadyExistsException("user name");
-        relatedUser = userDao.findByIdentifier(email, "email", -1L);
+        relatedUser = userDao.getUserByEmail(email);
         if (relatedUser != null)
             throw new UserAlreadyExistsException("email");
         userDao.save(newUser);
@@ -90,9 +90,9 @@ public class UserController {
 
         /* ===== ===== ===== find user ===== ===== ===== */
         logger.info("check user existence");
-        User locatedUser = userDao.findByIdentifier(identifier, "uname", (long) -1);
+        User locatedUser = userDao.getUserByUserName(identifier);
         if (locatedUser == null)
-            locatedUser = userDao.findByIdentifier(identifier, "email", (long) -1);
+            locatedUser = userDao.getUserByEmail(identifier);
         if (locatedUser == null)
             throw new UserNotFoundException(identifier);
 
@@ -123,7 +123,7 @@ public class UserController {
                                                 @RequestParam(required = false) String serializedUserSettings,
                                                 @RequestHeader String token,
                                                 @RequestHeader byte[] publicKey) {
-        User currUser = userDao.findByIdentifier(null, null, uid);
+        User currUser = userDao.getUserByUserId(uid);
         if (currUser == null)
             throw new UserNotFoundException("unknown"); // uid is hidden
         if (uname != null)
@@ -145,16 +145,16 @@ public class UserController {
 
     @PostMapping("/delete")
     public void deleteUser(@RequestParam Long uid) {
-        User currUser = userDao.findByIdentifier(null, null, uid);
+        User currUser = userDao.getUserByUserId(uid);
         if (currUser == null)
             throw new UserNotFoundException("unknown");
-        userDao.delete(uid);
+        userDao.delete(currUser);
     }
 
     @PostMapping("/update-settings")
     public void updateSettings(@RequestHeader String token, @RequestHeader byte[] publicKey,
                                @RequestParam long uid, @RequestParam String serializedUserSettings) {
-        User currUser = userDao.findByIdentifier(null, null, uid);
+        User currUser = userDao.getUserByUserId(uid);
         if (currUser == null) {
             throw new UserNotFoundException("unknown");
         }

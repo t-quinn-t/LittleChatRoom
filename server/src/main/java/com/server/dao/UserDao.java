@@ -6,16 +6,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDao {
     public void save(User user);
-    public void delete(Long uid);
+    public void delete(User user);
     public void updateUser(User user);
-
-    /**
-     * A Generic Search Function
-     * @param uid: if -1, then find by using an identifier (name or email, depends on idType)
-     *           else, use uid to search for a user
-     * @return a single user or null if failed
-     */
-    public User findByIdentifier(String identifier, String idType, Long uid);
+    public User getUserByUserName(String userName);
+    public User getUserByUserId(Long userId);
+    public User getUserByEmail(String email);
     public void updateUserSettings(User user, String userSettingsJsonStr);
     public String getUserSettings(User user);
 }

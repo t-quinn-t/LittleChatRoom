@@ -62,7 +62,7 @@ public class MessageController {
                                             @Header byte[] publicKey) {
         logger.info("Message Received from chatroom:" + roomId + "/n" + Arrays.toString(publicKey));
         String uname = message.getSender();
-        User user = userDao.findByIdentifier(uname, "uname", -1L);
+        User user = userDao.getUserByUserName(uname);
         if (user == null)
             throw new UserNotFoundException("unknown");
         logger.info("Verifying Token");
@@ -83,7 +83,7 @@ public class MessageController {
      @RequestHeader byte[] publicKey) {
         logger.info("Client request render all messages of chatroom" + String.valueOf(roomId));
         logger.info("Locating calling user");
-        User user = userDao.findByIdentifier(null, null, uid);
+        User user = userDao.getUserByUserId(uid);
         if (user == null)
             throw new UserNotFoundException("unknown");
         logger.info("Verifying token");

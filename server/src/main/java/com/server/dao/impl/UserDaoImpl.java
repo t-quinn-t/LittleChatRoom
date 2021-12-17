@@ -6,11 +6,13 @@ import net.minidev.json.JSONObject;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.data.relational.core.mapping.Embedded.Nullable;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+
 
 @Component
 public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
@@ -22,69 +24,43 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     public void save(User user) {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         getJdbcTemplate().update(
-                "INSERT INTO public.users (uname, pwd, email) VALUES (?, ?, ?)",
-                user.getName(),
-                user.getPassword(),
-                user.getEmail()
+            "INSERT INTO public.users (user_name, password, email) VALUES (?, ?, ?)",
+            user.getName(),
+            user.getPassword(),
+            user.getEmail()
         );
     }
 
-    public void delete(Long uid) throws NullPointerException {
+    public void delete(User user) throws NullPointerException {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         getJdbcTemplate().update(
-                "DELETE FROM public.users WHERE uid = ?",
-                uid
+            "DELETE FROM public.users WHERE user_id = ?",
+            user.getUid()
         );
     }
 
     public void updateUser(User user) throws NullPointerException {
         if (getJdbcTemplate() == null) throw new NullPointerException();
         getJdbcTemplate().update(
-                "UPDATE public.users SET " +
-                        "uname=?, " +
-                        "email=?, " +
-                        "pwd=? " +
-                        "WHERE uid=?",
-                user.getName(), user.getEmail(), user.getPassword(), user.getUid()
+            "UPDATE public.users SET " +
+                    "user_name=?, " +
+                    "email=?, " +
+                    "password=? " +
+                    "WHERE user_id=?",
+            user.getName(), user.getEmail(), user.getPassword(), user.getUid()
         );
     }
 
-    public User findByIdentifier(String identifier, String idType, Long uid) {
+    public User getUserByUserName(String userName) {
+        return getUserBySqlStr(buildGetUserSql("user_name", userName));
+    }
 
-        User user;
-        try {
-            if (getJdbcTemplate() == null) throw new NullPointerException();
-            if (uid == -1 || idType != null) {
-                String ps = "SELECT * FROM public.users WHERE " + idType + " = ?";
-                user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
-                        (resultSet, i) -> {
-                            User user1 = new User();
-                            user1.setName(resultSet.getString("uname"));
-                            user1.setEmail(resultSet.getString("email"));
-                            user1.setPassword(resultSet.getString("pwd"));
-                            user1.setUid(resultSet.getLong("uid"));
-                            return user1;
-                        },
-                        identifier));
-            }
-            else {
-                String ps = "SELECT * FROM public.users WHERE uid = ?";
-                user = DataAccessUtils.singleResult( getJdbcTemplate().query(ps,
-                        (resultSet, i) -> {
-                            User user1 = new User();
-                            user1.setName(resultSet.getString("uname"));
-                            user1.setEmail(resultSet.getString("email"));
-                            user1.setPassword(resultSet.getString("pwd"));
-                            user1.setUid(resultSet.getLong("uid"));
-                            return user1;
-                        },
-                        uid));
-            }
+    public User getUserByUserId(String userId) {
+        return getUserBySqlStr(buildGetUserSql("user_id", userId));
+    }
 
-        } catch (NullPointerException e) {
-            user = null;
-        }
-        return user;
+    public User getUserByEmail(String email) {
+        return getUserBySqlStr(buildGetUserSql("email", email));
     }
 
     @Override
@@ -105,5 +81,22 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         return DataAccessUtils.singleResult(getJdbcTemplate().query(ps,
                 (resultSet, i) -> resultSet.getString(1),
                 user.getUid()));
+    }
+
+    /* ===== ===== ===== Private Helper Functions ===== ===== ===== */ 
+    private String buildGetUserSql(String selectColName, Object filterVal) {
+        return "SELECT * FROM public.users WHERE" + selectColName + filterVal;
+    }
+
+    private User getUserBySqlStr(String sqlStr) {
+        return DataAccessUtils.singleResult( getJdbcTemplate().query(sqlStr,
+            (resultSet, i) -> {
+                User user1 = new User();
+                user1.setName(resultSet.getString("user_name"));
+                user1.setEmail(resultSet.getString("email"));
+                user1.setPassword(resultSet.getString("password"));
+                user1.setUid(resultSet.getLong("user_id"));
+                return user1;
+            }));
     }
 }

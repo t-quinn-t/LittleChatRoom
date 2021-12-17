@@ -58,7 +58,7 @@ public class ChatroomController {
         logger.info("User " + uid + " requests list of registered rooms");
         /* ===== ===== ===== Check user sanity ===== ===== ===== */
         logger.debug("Locating user entity");
-        User locatedUser = userDao.findByIdentifier(null, null, uid);
+        User locatedUser = userDao.getUserByUserId(uid);
         if (locatedUser == null)
             throw new UserNotFoundException("unknown");
 
@@ -81,7 +81,7 @@ public class ChatroomController {
 
         /* ===== ===== ===== Check user sanity ===== ===== ===== */
         logger.debug("Locating user entity");
-        User locatedUser = userDao.findByIdentifier(null, null, uid);
+        User locatedUser = userDao.getUserByUserId(uid);
         if (locatedUser == null)
             throw new UserNotFoundException("unknown");
 
@@ -108,7 +108,7 @@ public class ChatroomController {
                                  @RequestHeader String token, @RequestHeader byte[] publicKey) {
         /* ===== ===== ===== Check user sanity ===== ===== ===== */
         logger.debug("Locating user entity");
-        User locatedUser = userDao.findByIdentifier(null, null, uid);
+        User locatedUser = userDao.getUserByUserId(uid);
         if (locatedUser == null)
             throw new UserNotFoundException("unknown");
 
