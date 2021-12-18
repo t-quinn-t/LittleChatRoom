@@ -1,32 +1,32 @@
 package com.server.model;
 
 public class Chatroom {
-    private long cid;
-    private String cname;
+    private long roomId;
+    private String roomName;
 
     public Chatroom() {
-        this.cname = "default chatroom";
+        this.roomName = "default chatroom";
     }
 
     public Chatroom(String name) {
-        this.cname = name;
+        this.roomName = name;
     }
 
-    public Chatroom(long cid, String name) {this.cid = cid; this.cname = name;}
+    public Chatroom(long roomId, String roomName) {this.roomId = roomId; this.roomName = roomName;}
 
     public String getName() {
-        return cname;
+        return roomName;
     }
 
     public void setName(String name) {
-        this.cname = name;
+        this.roomName = name;
     }
 
-    public Long getCid() {
-        return cid;
+    public Long getRoomId() {
+        return roomId;
     }
 
-    public void setCid(Long id) {
-        this.cid = id;
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 }

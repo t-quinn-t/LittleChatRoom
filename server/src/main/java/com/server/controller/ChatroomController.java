@@ -41,7 +41,7 @@ public class ChatroomController {
 
     @PostMapping("/update")
     public EntityModel<Chatroom> updateName(@RequestParam Long cid, @RequestParam(required = false) String name) {
-        Chatroom currChatroom = chatroomDao.findRoomByIdentifier(cid);
+        Chatroom currChatroom = chatroomDao.findRoomById(cid);
         if (currChatroom == null)
             throw new ChatroomNotFoundException("unknown");
         if (name != null)

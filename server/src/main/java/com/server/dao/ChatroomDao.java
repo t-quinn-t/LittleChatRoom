@@ -12,8 +12,8 @@ public interface ChatroomDao {
     Chatroom save(Chatroom chatroom);
     void delete(Long cid);
     void updateChatroom(Chatroom chatroom);
-    Chatroom findRoomByIdentifier(Long cid);
+    Chatroom findRoomById(Long roomId);
     Chatroom findRoomByName(String roomName);
-    List<Chatroom> findRoomsByUid(Long uid);
+    List<Chatroom> findRoomsByUid(Long userId);
     void registerUserToRoom(User user, Chatroom room);
 }
