@@ -1,29 +1,29 @@
 package com.server.model;
 
 public class User {
-    private Long uid;
-    private String uname;
+    private Long id;
+    private String name;
     private String email;
     private String password;
 
     public User() {
-        this.uname = "default";
+        this.name = "default";
         this.email = "default@littlechatroom.com";
         this.password = "pwd";
     }
 
     public User(String uname, String email, String password) {
-        this.uname = uname;
+        this.name = uname;
         this.email = email;
         this.password = password;
     }
 
     public String getName() {
-        return uname;
+        return name;
     }
 
     public void setName(String name) {
-        this.uname = name;
+        this.name = name;
     }
 
     public String getEmail() {
@@ -42,11 +42,11 @@ public class User {
         this.password = pwd;
     }
 
-    public Long getUid() {
-        return this.uid;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setUid(Long uid) {
-        this.uid = uid;
+    public void setId(Long uid) {
+        this.id = uid;
     }
 }

@@ -24,7 +24,6 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,22 +67,21 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
             logger.info("Generating new tokens using generated keypair. ");
-            logger.debug("Expected claims: uid=" + user.getUid() + "uname" + user.getName());
+            logger.debug("Expected claims: uid=" + user.getId() + "uname" + user.getName());
 
-            Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
-            String token = JWT.create()
-                    .withIssuer(this.issuer)
-                    .withExpiresAt(new Date(LocalDate.now().plusDays(1L).toEpochSecond(LocalTime.now(),
-                            ZoneOffset.UTC) * 1000))
-                    .withClaim("uid", user.getUid())
-                    .withClaim("uname", user.getName())
-                    .withClaim("email", user.getEmail())
-                    .sign(algorithm);
+            Algorithm algorithm =
+                    Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
+            String token = JWT.create().withIssuer(this.issuer)
+                .withExpiresAt(new Date(LocalDate.now().plusDays(1L)
+                        .toEpochSecond(LocalTime.now(), ZoneOffset.UTC) * 1000))
+                .withClaim("uid", user.getId()).withClaim("uname", user.getName())
+                .withClaim("email", user.getEmail()).sign(algorithm);
             return new JWTAuthServiceTokenPackage(token, publicKey.getEncoded());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot generate public/private keys with ECDSA. No algorithm found.");
         } catch (InvalidAlgorithmParameterException e) {
-            logger.error("Cannot generate public/private keys using ECDSA, invalid algorithm: \n {}" + e.getMessage());
+            logger.error("Cannot generate public/private keys using ECDSA, invalid algorithm: \n {}"
+                    + e.getMessage());
         } catch (NullPointerException e) {
             logger.error("Keypair dao error encountered: \n {}", e.getMessage());
         } catch (JWTCreationException e) {
@@ -92,7 +90,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
         return null;
     }
 
-    public boolean verifyToken(String token, byte[] publicKeyByteData, User claimingUser) throws RuntimeException {
+    public boolean verifyToken(String token, byte[] publicKeyByteData, User claimingUser)
+            throws RuntimeException {
 
         try {
             /* ===== ===== ===== Retrieving Private Key ===== ===== ===== */
@@ -103,22 +102,23 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             logger.info("Retrieving keypair from their byte data");
 
             KeyFactory factory = KeyFactory.getInstance("ECDSA");
-            PrivateKey privateKey = factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyByteData));
+            PrivateKey privateKey =
+                factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyByteData));
             PublicKey publicKey = factory.generatePublic(new X509EncodedKeySpec(publicKeyByteData));
 
             logger.debug("Retrieved Publick Key:" + Arrays.toString(publicKey.getEncoded()));
             logger.debug("Retrieved Private Key:" + Arrays.toString(privateKey.getEncoded()));
 
             /* ===== ===== ===== Verify token ===== ===== ===== */
-            logger.info("Verifying Token ... \n" + "expected claims:\n uid=" + claimingUser.getUid());
+            logger.info(
+                "Verifying Token ... \n" + "expected claims:\n uid=" + claimingUser.getId());
 
-            Algorithm algorithm = Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(this.issuer)
-                    .withClaim("uid", claimingUser.getUid())
-                    .withClaim("uname", claimingUser.getName())
-                    .withClaim("email", claimingUser.getEmail())
-                    .build();
+            Algorithm algorithm =
+                Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
+            JWTVerifier verifier = JWT.require(algorithm).withIssuer(this.issuer)
+                .withClaim("uid", claimingUser.getId())
+                .withClaim("uname", claimingUser.getName())
+                .withClaim("email", claimingUser.getEmail()).build();
             DecodedJWT decodedToken = verifier.verify(token);
             logger.info("Successfully verified token");
             return true;
@@ -132,7 +132,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             logger.error("Cannot create jwt verifier instance: \n {}", e.getMessage());
         } catch (TokenExpiredException e) {
             // Special case where user token is expired
-            
+
             /* ===== ===== ===== Remove Keypairs from keystore ===== ===== ===== */
             logger.info("Removing keypair from keystore as token is expired");
             keystore.deregisterKeyPair(publicKeyByteData);

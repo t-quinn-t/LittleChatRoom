@@ -98,6 +98,6 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
         if (getJdbcTemplate() == null)
             throw new NullPointerException();
         String sql = "INSERT INTO public.chatroom_user_mappings (user_id, room_id, user_nickname, as_role) VALUES(?,?,?,?)";
-        getJdbcTemplate().update(sql, user.getUid(), room.getRoomId(), user.getName(), 0);
+        getJdbcTemplate().update(sql, user.getId(), room.getRoomId(), user.getName(), 0);
     }
 }
