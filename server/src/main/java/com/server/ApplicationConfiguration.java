@@ -17,9 +17,9 @@ public class ApplicationConfiguration {
     public DataSource postgresDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/LittleChatRoom");
-        dataSource.setUsername("admin");
-        dataSource.setPassword("333");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/simplechatapp"); // local dev db 
+        dataSource.setUsername("qtao");
+        dataSource.setPassword("Qt08201373");
         return dataSource;
     }
 

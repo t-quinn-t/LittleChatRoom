@@ -38,15 +38,15 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     }
 
     public User getUserByUserName(String userName) {
-        return getUserBySqlStr(buildGetUserSql("user_name", userName));
+        return getUserBySqlStr(buildGetUserSql(), "user_name", userName);
     }
 
     public User getUserByUserId(Long userId) {
-        return getUserBySqlStr(buildGetUserSql("user_id", userId));
+        return getUserBySqlStr(buildGetUserSql(), "user_id", userId);
     }
 
     public User getUserByEmail(String email) {
-        return getUserBySqlStr(buildGetUserSql("email", email));
+        return getUserBySqlStr(buildGetUserSql(), "email", email);
     }
 
     @Override
@@ -70,11 +70,11 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
     }
 
     /* ===== ===== ===== Private Helper Functions ===== ===== ===== */
-    private String buildGetUserSql(String selectColName, Object filterVal) {
-        return "SELECT * FROM public.users WHERE" + selectColName + filterVal;
+    private String buildGetUserSql() {
+        return "SELECT * FROM public.users WHERE ? = ?";
     }
 
-    private User getUserBySqlStr(String sqlStr) {
+    private User getUserBySqlStr(String sqlStr, String selectColName, Object filterVal) {
         return DataAccessUtils.singleResult(getJdbcTemplate().query(sqlStr, (resultSet, i) -> {
             User user1 = new User();
             user1.setName(resultSet.getString("user_name"));
@@ -82,6 +82,6 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
             user1.setPassword(resultSet.getString("password"));
             user1.setId(resultSet.getLong("user_id"));
             return user1;
-        }));
+        }, selectColName, filterVal));
     }
 }
