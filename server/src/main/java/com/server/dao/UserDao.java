@@ -17,7 +17,7 @@ public interface UserDao {
     // ECDSA Private Key related dao apis
     public void     updateUserPrivateKey(User user, byte[] privateKeyByteVal);
     public byte[]   getUserPrivateKey(User user);
-
+    public void     removeUserPrivateKey(User user);
 }
 
 

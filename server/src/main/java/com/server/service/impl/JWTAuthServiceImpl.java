@@ -8,6 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.server.dao.ECKeyPairDao;
+import com.server.dao.UserDao;
 import com.server.exception.UserTokenExpiredException;
 import com.server.model.User;
 import com.server.service.JWTAuthService;
@@ -37,14 +38,17 @@ import java.util.Date;
 public class JWTAuthServiceImpl implements JWTAuthService {
 
     private final ECGenParameterSpec ecGenParameterSpec;
-    private final ECKeyPairDao keystore;
+    // private final ECKeyPairDao keystore;
+
+    private final UserDao userDao;
     private final Logger logger = LoggerFactory.getLogger(JWTAuthServiceImpl.class);
 
     private final String issuer = "littlechatroom";
 
     @Autowired
-    public JWTAuthServiceImpl(ECKeyPairDao keystore) {
-        this.keystore = keystore;
+    public JWTAuthServiceImpl(UserDao userDao) {
+        // this.keystore = keystore;
+        this.useDao = userDao;
         this.ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -63,7 +67,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Storing KeyPairs ===== ===== ===== */
             logger.info("Storing new generated keypair to database");
-            keystore.registerKeyPair(publicKey.getEncoded(), privateKey.getEncoded());
+            userDao.updateUserPrivateKey(user, privateKey.getEncoded());
+            // keystore.registerKeyPair(publicKey.getEncoded(), privateKey.getEncoded());
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
             logger.info("Generating new tokens using generated keypair. ");
@@ -96,7 +101,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
         try {
             /* ===== ===== ===== Retrieving Private Key ===== ===== ===== */
             logger.info("Retrieving private key from database");
-            byte[] privateKeyByteData = keystore.getPrivateKeyByteData(publicKeyByteData);
+            // byte[] privateKeyByteData = keystore.getPrivateKeyByteData(publicKeyByteData);
+            byte[] privateKeyByteData = userDao.getUserPrivateKey(claimingUser);
 
             /* ===== ===== ===== Restore keypair from byte data ===== ===== ===== */
             logger.info("Retrieving keypair from their byte data");
@@ -110,8 +116,7 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             logger.debug("Retrieved Private Key:" + Arrays.toString(privateKey.getEncoded()));
 
             /* ===== ===== ===== Verify token ===== ===== ===== */
-            logger.info(
-                "Verifying Token ... \n" + "expected claims:\n uid=" + claimingUser.getId());
+            logger.info("Verifying Token ... \n" + "expected claims:\n uid=" + claimingUser.getId());
 
             Algorithm algorithm =
                 Algorithm.ECDSA256((ECPublicKey) publicKey, (ECPrivateKey) privateKey);
@@ -135,7 +140,8 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Remove Keypairs from keystore ===== ===== ===== */
             logger.info("Removing keypair from keystore as token is expired");
-            keystore.deregisterKeyPair(publicKeyByteData);
+            // keystore.deregisterKeyPair(publicKeyByteData);
+            userDao.removeUserPrivateKey(claimingUser);
 
             /* ===== ===== ===== Throw Exception to client ===== ===== ===== */
             throw new UserTokenExpiredException();

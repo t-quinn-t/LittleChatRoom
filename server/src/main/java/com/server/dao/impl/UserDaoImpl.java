@@ -19,21 +19,7 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
 
     public void save(User user) {
         if (getJdbcTemplate() == null)
-            throw new NullPointerException();
-        getJdbcTemplate().update(
-                "INSERT INTO public.users (user_name, password, email) VALUES (?, ?, ?)",
-                user.getName(), user.getPassword(), user.getEmail());
-    }
-
-    public void delete(User user) throws NullPointerException {
-        if (getJdbcTemplate() == null)
-            throw new NullPointerException();
-        getJdbcTemplate().update("DELETE FROM public.users WHERE user_id = ?", user.getId());
-    }
-
-    public void updateUser(User user) throws NullPointerException {
-        if (getJdbcTemplate() == null)
-            throw new NullPointerException();
+            throw new NullPointerException();user
         getJdbcTemplate().update(
                 "UPDATE public.users SET " + "user_name=?, " + "email=?, " + "password=? "
                         + "WHERE user_id=?",
@@ -104,5 +90,12 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
             byte[] r = resultSet.getBytes("private_key");
                 return r;
         }));
+    }
+
+    public void removeUserPrivateKey(User user) {
+        if (getJdbcTemplate() == null)
+            throw new NullPointerException();
+        String sqlstr = "UPDATE public.users SET private_key = NULL WHERE user_id = ?";
+        getJdbcTemplate().update(sqlstr, user.getId());
     }
 }
