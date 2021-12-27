@@ -5,6 +5,9 @@ import com.server.model.User;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
+
+import java.sql.ResultSet;
+
 import javax.sql.DataSource;
 
 @Component
@@ -83,5 +86,24 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
             user1.setId(resultSet.getLong("user_id"));
             return user1;
         }, selectColName, filterVal));
+    }
+
+    /* ===== ===== ===== ECDSA Key Pair related ===== ===== ===== */ 
+    public void updateUserPrivateKey(User user, byte[] privateKeyByteVal) {
+        if (getJdbcTemplate() == null)
+            throw new NullPointerException();
+        String sqlstr = "UPDATE public.users SET private_key = ? WHERE users.user_id = ?";
+        getJdbcTemplate().update(sqlstr, privateKeyByteVal, user.getId());
+    }
+
+    public void getUserPrivateKey(User user) {
+        if (getJdbcTemplate() == null)
+            throw new NullPointerException();
+        String sqlstr = "SELECT * FROM public.users WHERE user_id = ?";
+        return DataAccessUtils.singleResult(getJdbcTemplate().query(sqlstr, (resultSet, i) -> {
+            byte[] r = resultSet.getBytes("private_key");
+                logger.warn(Arrays.toString(r));
+                return r;
+        }))
     }
 }
