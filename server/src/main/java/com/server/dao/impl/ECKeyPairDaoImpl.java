@@ -63,5 +63,4 @@ public class ECKeyPairDaoImpl extends JdbcDaoSupport implements ECKeyPairDao {
         logger.debug("Retrieving Private Key from Public Key: \n {}", Arrays.toString(targetPublicKeyByteData));
         return privateKeyByteData;
 
-    }
 }

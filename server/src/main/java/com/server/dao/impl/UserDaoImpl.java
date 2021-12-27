@@ -96,14 +96,13 @@ public class UserDaoImpl extends JdbcDaoSupport implements UserDao {
         getJdbcTemplate().update(sqlstr, privateKeyByteVal, user.getId());
     }
 
-    public void getUserPrivateKey(User user) {
+    public byte[] getUserPrivateKey(User user) {
         if (getJdbcTemplate() == null)
             throw new NullPointerException();
         String sqlstr = "SELECT * FROM public.users WHERE user_id = ?";
         return DataAccessUtils.singleResult(getJdbcTemplate().query(sqlstr, (resultSet, i) -> {
             byte[] r = resultSet.getBytes("private_key");
-                logger.warn(Arrays.toString(r));
                 return r;
-        }))
+        }));
     }
 }
