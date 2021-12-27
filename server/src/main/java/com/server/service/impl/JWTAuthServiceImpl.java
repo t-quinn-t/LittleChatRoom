@@ -7,7 +7,6 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.server.dao.ECKeyPairDao;
 import com.server.dao.UserDao;
 import com.server.exception.UserTokenExpiredException;
 import com.server.model.User;
@@ -68,7 +67,6 @@ public class JWTAuthServiceImpl implements JWTAuthService {
             /* ===== ===== ===== Storing KeyPairs ===== ===== ===== */
             logger.info("Storing new generated keypair to database");
             userDao.updateUserPrivateKey(user, privateKey.getEncoded());
-            // keystore.registerKeyPair(publicKey.getEncoded(), privateKey.getEncoded());
 
             /* ===== ===== ===== Generate Token ===== ===== ===== */
             logger.info("Generating new tokens using generated keypair. ");
@@ -101,7 +99,6 @@ public class JWTAuthServiceImpl implements JWTAuthService {
         try {
             /* ===== ===== ===== Retrieving Private Key ===== ===== ===== */
             logger.info("Retrieving private key from database");
-            // byte[] privateKeyByteData = keystore.getPrivateKeyByteData(publicKeyByteData);
             byte[] privateKeyByteData = userDao.getUserPrivateKey(claimingUser);
 
             /* ===== ===== ===== Restore keypair from byte data ===== ===== ===== */
@@ -140,7 +137,6 @@ public class JWTAuthServiceImpl implements JWTAuthService {
 
             /* ===== ===== ===== Remove Keypairs from keystore ===== ===== ===== */
             logger.info("Removing keypair from keystore as token is expired");
-            // keystore.deregisterKeyPair(publicKeyByteData);
             userDao.removeUserPrivateKey(claimingUser);
 
             /* ===== ===== ===== Throw Exception to client ===== ===== ===== */
