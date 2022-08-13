@@ -80,8 +80,6 @@ public class ChatroomDaoImpl extends JdbcDaoSupport implements ChatroomDao {
                 roomName
         ));
     }
-
-
     public List<Chatroom> findRoomsByUid(Long uid) {
         if (getJdbcTemplate() == null)
             throw new NullPointerException();
