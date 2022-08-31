@@ -1,5 +1,6 @@
 package com.server.controller;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.server.dao.ChatroomDao;
 import com.server.dao.UserDao;
@@ -65,7 +66,7 @@ public class ChatroomController {
         /* ===== ===== ===== Verify JWT ===== ===== ===== */
         logger.debug("Verifying token");
         if (!jwtAuthService.verifyToken(token, publicKey, locatedUser))
-            throw new TokenExpiredException("unknown");
+            throw new JWTVerificationException("unknown");
 
         /* ===== ===== ===== Get room list ===== ===== ===== */
         logger.debug("Collecting user registered rooms");
@@ -94,7 +95,7 @@ public class ChatroomController {
         /* ===== ===== ===== Verify JWT ===== ===== ===== */
         logger.debug("Verifying token");
         if (!jwtAuthService.verifyToken(token, publicKey, locatedUser))
-            throw new TokenExpiredException("unknown");
+            throw new JWTVerificationException("unknown");
 
         /* ===== ===== ===== Join room ===== ===== ===== */
         logger.debug("Registering user");
@@ -121,7 +122,7 @@ public class ChatroomController {
         /* ===== ===== ===== Verify JWT ===== ===== ===== */
         logger.debug("Verifying token");
         if (!jwtAuthService.verifyToken(token, publicKey, locatedUser))
-            throw new TokenExpiredException("unknown");
+            throw new JWTVerificationException("unknown");
 
         /* ===== ===== ===== Create room ===== ===== ===== */
         logger.info("Creating new room");

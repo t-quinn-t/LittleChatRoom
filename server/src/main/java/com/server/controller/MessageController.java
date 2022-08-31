@@ -1,5 +1,6 @@
 package com.server.controller;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.server.dao.MessageDao;
 import com.server.dao.UserDao;
@@ -72,7 +73,7 @@ public class MessageController {
             return messageModelAssembler.toModel(registeredMessage);
         }
         else {
-            throw new TokenExpiredException("");
+            throw new JWTVerificationException("");
         }
     }
 
@@ -90,7 +91,7 @@ public class MessageController {
         logger.warn(token);
         logger.debug("Verifying token with public key:" + Arrays.toString(publicKey));
         if (!jwtAuthService.verifyToken(token, publicKey, user))
-            throw new TokenExpiredException("");
+            throw new JWTVerificationException("");
         List<Message> messagesFromRoom = messageDao.getMessagesByRoomId(roomId);
         System.out.println("sending message lists");
         logger.info("Responding with list of messages from chatroom:" + roomId);
